@@ -1,0 +1,58 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 23,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "my-gcc-debug",
+            "inherits": ["default-debug"],
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "gcc-15.1"
+            }
+        },
+        {
+            "name": "my-gcc-release",
+            "inherits": ["default-release"],
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "gcc-15.1"
+            }
+        },
+        {
+            "name": "my-clang-debug",
+            "inherits": ["default-debug"],
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "clang"
+            }
+        },
+        {
+            "name": "my-clang-release",
+            "inherits": ["default-release"],
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "clang"
+            }
+        },
+        {
+            "name": "my-sanitize-debug",
+            "inherits": ["gcc-sanitize-debug"],
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "gcc-15.1"
+            }
+        },
+        {
+            "name": "my-sanitize-release",
+            "inherits": ["gcc-sanitize-release"],
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "gcc-15.1"
+            }
+        }
+    ]
+}
