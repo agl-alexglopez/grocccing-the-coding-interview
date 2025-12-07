@@ -1,6 +1,6 @@
-# groCCing-the-coding-interview
+# GroCCCing the Coding Interview
 
-This repository contains coding interview practice problems in C, specifically to test my [C Container Collection](https://github.com/agl-alexglopez/ccc).
+This repository contains coding interview practice problems in C, specifically to test my [C Container Collection (CCC)](https://github.com/agl-alexglopez/ccc).
 
 ## Rationale
 
