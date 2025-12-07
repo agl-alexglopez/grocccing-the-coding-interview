@@ -1,6 +1,6 @@
 # This version gives us file sets which are great for library install.
 cmake_minimum_required(VERSION 3.23)
-project("grocc" 
+project("groccc" 
   VERSION 0.40.0
   LANGUAGES C
   DESCRIPTION "Ensure your time spent preparing for a coding interview is wasted. Do it in C."
@@ -8,7 +8,6 @@ project("grocc"
 # Specify that C23 should be used
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)
-option(BUILD_SHARED_LIBS "Building ccc as a shared library is available, but OFF by default." OFF)
 
 # For releases we only produce this and the source. No test or sample bloat.
 include_directories("${PROJECT_SOURCE_DIR}/${PROJECT_NAME}")

@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.23)
-project("grocc problems"
+project("groccc-problems"
     VERSION 1.0.0
     LANGUAGES C
-    DESCRIPTION "Problems to grocc."
+    DESCRIPTION "Problems to groccc."
 )
 
 ######################### Fetch C Container Collection ########################
