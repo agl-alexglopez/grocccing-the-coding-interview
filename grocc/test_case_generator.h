@@ -26,32 +26,32 @@ struct Two_sum_output
     int addends[2];
 };
 
-TCG_begin_test_cases(two_sum_tests, struct Two_sum_input, struct Two_sum_output)
+TCG_tests_begin(two_sum_tests, struct Two_sum_input, struct Two_sum_output)
 
-TCG_begin_test_case("empty", {})
-TCG_end_test_case({
+TCG_test_case_begin("empty", {})
+TCG_test_case_end({
     .addends = {-1, -1}
 })
 
-TCG_begin_test_case("negatives", {
+TCG_test_case_begin("negatives", {
     .target = 15,
     .nums = (int[10]){1, 3, -980, 6, 7, 13, 44, 32, 995, -1,},
     .nums_count = 10,
 })
-TCG_end_test_case({
+TCG_test_case_end({
     .addends = {8, 2},
 })
 
-TCG_begin_test_case("no solution", {
+TCG_test_case_begin("no solution", {
     .target = 2,
     .nums = (int[4]){1, 3, 4, 5},
     .nums_count = 4,
 })
-TCG_end_test_case({
+TCG_test_case_end({
     .addends = {-1, -1}
 })
 
-TCG_end_test_cases(two_sum_tests);
+TCG_tests_end(two_sum_tests);
 ```
 
 Then the calling code utilizes the types the user defined for test cases and the
@@ -71,7 +71,7 @@ two_sum(struct Two_sum_input const *const test_case)
         &(Small_fixed_map){}, struct Int_key_val, key, flat_hash_map_int_to_u64,
         flat_hash_map_id_order, NULL, NULL,
         flat_hash_map_fixed_capacity(Small_fixed_map));
-    struct Two_sum_output solution = {-1, -1};
+    struct Two_sum_output solution = {{-1, -1}};
     for (size_t i = 0; i < test_case->nums_count; ++i)
     {
         struct Int_key_val const *const other_addend = get_key_value(
@@ -131,7 +131,7 @@ structs with named fields for all input, even if a single field.
 define structs with named fields for all output, even if a single field.
 @warning a terminating semicolon is not needed when calling this macro.
 @warning output is a constant field and cannot be mutated. */
-#define TCG_begin_test_cases(test_cases_name, input_type, output_type)         \
+#define TCG_tests_begin(test_cases_name, input_type, output_type)              \
     static struct                                                              \
     {                                                                          \
         char const *const file;                                                \
@@ -147,7 +147,7 @@ define structs with named fields for all output, even if a single field.
 struct type.
 @warning enclose the input in braces and ensure that each field is appropriately
 labeled with the correct designated initializer. */
-#define TCG_begin_test_case(test_name, input_type_brace_initializer...)        \
+#define TCG_test_case_begin(test_name, input_type_brace_initializer...)        \
     {                                                                          \
         .file = __FILE_NAME__, .line = __LINE__, .name = test_name,            \
         input_type_brace_initializer,
@@ -157,7 +157,7 @@ labeled with the correct designated initializer. */
 output struct type.
 @warning enclose the output in braces and ensure that each field is
 appropriately labeled with the correct designated initializer. */
-#define TCG_end_test_case(output_type_brace_initializer...)                    \
+#define TCG_test_case_end(output_type_brace_initializer...)                    \
     output_type_brace_initializer,                                             \
     }                                                                          \
     ,
@@ -165,7 +165,7 @@ appropriately labeled with the correct designated initializer. */
 /** @brief End the test cases defined for the given struct.
 @param[in] test_cases_name the same name used for the begin macro.
 @warning a terminating semicolon is needed when calling this macro. */
-#define TCG_end_test_cases(test_cases_name)                                    \
+#define TCG_tests_end(test_cases_name)                                         \
     }                                                                          \
     ;                                                                          \
     static const unsigned long long tcg_count_##test_cases_name                \
