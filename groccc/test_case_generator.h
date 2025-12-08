@@ -177,6 +177,15 @@ appropriately labeled with the correct designated initializer. */
     static const unsigned long tcg_count_##test_cases_name                     \
         = sizeof(test_cases_name) / sizeof((test_cases_name)[0])
 
+/** @brief Retrieve the unsigned long long count of tests for this test case
+struct.
+@param[in] test_cases_name the name of the current test cases struct.
+@return the unsigned count of tests contained within this struct.
+
+This can be helpful if the user is tracking how many tests are being passed or
+failed while iterating over the test cases struct. */
+#define TCG_tests_count(test_cases_name) tcg_count_##test_cases_name
+
 /** @brief Obtain the string name given to a test.
 @param[in] test_cases_name the name of the current test cases struct being ran.
 @return the string name given by the user to this test case.
@@ -230,15 +239,6 @@ struct My_output_type const *output = &TCG_test_case_output(my_test_cases);
 
 The user can decide if retrieve by copy or reference is preferred. */
 #define TCG_test_case_output(test_cases_name) test_cases_name[tcg_index].output
-
-/** @brief Retrieve the unsigned long long count of tests for this test case
-struct.
-@param[in] test_cases_name the name of the current test cases struct.
-@return the unsigned count of tests contained within this struct.
-
-This can be helpful if the user is tracking how many tests are being passed or
-failed while iterating over the test cases struct. */
-#define TCG_tests_count(test_cases_name) tcg_count_##test_cases_name
 
 /** @brief Runs the provided solution, comparison code, and cleanup code over
 the user generated test code.
