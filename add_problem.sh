@@ -17,10 +17,12 @@ if [ -d "$DIR" ]; then
 fi
 
 # Struct prefix: Uppercase only the first character
-STRUCT_PREFIX="$(printf "%s" "$PROBLEM" | sed -E 's/^([a-z])/\U\1/')"
+FIRST_CHAR=$(echo "${PROBLEM:0:1}" | tr '[:lower:]' '[:upper:]')
+REST_OF_STRING="${PROBLEM:1}"
+STRUCT_PREFIX="${FIRST_CHAR}${REST_OF_STRING}"
 
 # Header guard name: all caps, snake stays snake
-HEADER_GUARD="$(printf "%s" "$PROBLEM" | tr '[:lower:]' '[:upper:]')_TEST_CASES_H"
+HEADER_GUARD=$(echo "${PROBLEM}" | tr '[:lower:]' '[:upper:]')
 
 C_FILE="$DIR/${PROBLEM}.c"
 H_FILE="$DIR/${PROBLEM}_test_cases.h"
@@ -74,20 +76,20 @@ struct ${STRUCT_PREFIX}_output
     /* TODO: define expected output fields */
 };
 
-/* clang-format off */
 TCG_tests_begin(${PROBLEM}_tests,
                 struct ${STRUCT_PREFIX}_input,
                 struct ${STRUCT_PREFIX}_output)
 
-TCG_test_case_begin("describe this test", {
-    /* input struct designated initializer fields */
-})
-TCG_test_case_end({
-    /* output struct designated initializer fields */
+TCG_test_case("describe this test", {
+    .input = {
+        /* ${STRUCT_PREFIX}_input field initializers. */
+    },
+    .output = {
+        /* ${STRUCT_PREFIX}_output field initializers. */
+    },
 })
 
 TCG_tests_end(${PROBLEM}_tests);
-/* clang-format on */
 
 #endif /* ${HEADER_GUARD} */
 EOF

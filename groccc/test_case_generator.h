@@ -12,13 +12,17 @@ Define test cases in a separate header. Every test case is given a `name`,
 `input`, and `output` field according to the user provided types.
 
 ```
+#ifndef TWO_SUM_TEST_CASES_H
+#define TWO_SUM_TEST_CASES_H
+#include <stddef.h>
+
 #include "../test_case_generator.h"
 
 struct Two_sum_input
 {
     int target;
-    int const *nums;
-    int nums_count;
+    int const *const nums;
+    size_t nums_count;
 };
 
 struct Two_sum_output
@@ -27,31 +31,34 @@ struct Two_sum_output
 };
 
 TCG_tests_begin(two_sum_tests, struct Two_sum_input, struct Two_sum_output)
-
-TCG_test_case_begin("empty", {})
-TCG_test_case_end({
-    .addends = {-1, -1}
+TCG_test_case("empty", {
+    .input = {},
+    .output = {
+        .addends = {-1, -1}
+    },
 })
-
-TCG_test_case_begin("negatives", {
-    .target = 15,
-    .nums = (int[10]){1, 3, -980, 6, 7, 13, 44, 32, 995, -1,},
-    .nums_count = 10,
+TCG_test_case("negatives", {
+    .input = {
+        .target = 15,
+        .nums = (int[10]){1, 3, -980, 6, 7, 13, 44, 32, 995, -1,},
+        .nums_count = 10,
+    },
+    .output = {
+        .addends = {8, 2},
+    }
 })
-TCG_test_case_end({
-    .addends = {8, 2},
+TCG_test_case("no solution", {
+    .input = {
+        .target = 2,
+        .nums = (int[4]){1, 3, 4, 5},
+        .nums_count = 4,
+    },
+    .output = {
+        .addends = {-1, -1}
+    },
 })
-
-TCG_test_case_begin("no solution", {
-    .target = 2,
-    .nums = (int[4]){1, 3, 4, 5},
-    .nums_count = 4,
-})
-TCG_test_case_end({
-    .addends = {-1, -1}
-})
-
 TCG_tests_end(two_sum_tests);
+#endif // TWO_SUM_TEST_CASES_H
 ```
 
 Then the calling code utilizes the types the user defined for test cases and the
@@ -143,30 +150,56 @@ define structs with named fields for all output, even if a single field.
         char const *const file;                                                \
         int line;                                                              \
         char const *const name;                                                \
-        input_type input;                                                      \
-        output_type const output;                                              \
+        struct                                                                 \
+        {                                                                      \
+            input_type input;                                                  \
+            output_type const output;                                          \
+        };                                                                     \
     }(test_cases_name)[] = {
 
-/** @brief Begin a new test case within the current test cases struct.
-@param[in] test_name a human readable test name string to identify purpose.
-@param input_brace_initializer the braces enclosed initializer for the input
-struct type.
-@warning enclose the input in braces and ensure that each field is appropriately
-labeled with the correct designated initializer. */
-#define TCG_test_case_begin(test_name, input_type_brace_initializer...)        \
-    {                                                                          \
-        .file = __FILE_NAME__, .line = __LINE__, .name = test_name,            \
-        .input = input_type_brace_initializer,
+/** @brief Create a test case within a test struct by name, input, and output
+@param[in] test_name the string literal name used to describe the test.
+@param brace_enclosed_input_output_initializers the field designated
+initializers for the input and expected output of a test case.
+@warning Always enclose the second argument in `{}` braces and label the
+`.input` and `.output` fields.
 
-/** @brief End a new test case within the current test cases struct.
-@param output_type_brace_initializer the braces enclosed initializer for the
-output struct type.
-@warning enclose the output in braces and ensure that each field is
-appropriately labeled with the correct designated initializer. */
-#define TCG_test_case_end(output_type_brace_initializer...)                    \
-    .output = output_type_brace_initializer,                                   \
-    }                                                                          \
-    ,
+Here is a minimal usage example
+
+```
+struct Two_sum_input
+{
+    int target;
+    int const *const nums;
+    size_t nums_count;
+};
+struct Two_sum_output
+{
+    int addends[2];
+};
+TCG_tests_begin(two_sum_tests, struct Two_sum_input, struct Two_sum_output)
+TCG_test_case("negatives", {
+    .input = {
+        .target = 15,
+        .nums = (int[10]){1, 3, -980, 6, 7, 13, 44, 32, 995, -1,},
+        .nums_count = 10,
+    },
+    .output = {
+        .addends = {8, 2},
+    }
+})
+TCG_tests_end(two_sum_tests);
+```
+
+The names of the input and output fields are always the same but their types
+are defined for each test by the user. */
+#define TCG_test_case(test_name, brace_enclosed_input_output_initializers...)  \
+    {                                                                          \
+        .file = __FILE_NAME__,                                                 \
+        .line = __LINE__,                                                      \
+        .name = test_name,                                                     \
+        brace_enclosed_input_output_initializers,                              \
+    },
 
 /** @brief End the test cases defined for the given struct.
 @param[in] test_cases_name the same name used for the begin macro.
