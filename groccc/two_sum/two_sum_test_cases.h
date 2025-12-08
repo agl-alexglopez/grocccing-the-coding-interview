@@ -1,3 +1,5 @@
+#ifndef TWO_SUM_TEST_CASES_H
+#define TWO_SUM_TEST_CASES_H
 #include <stddef.h>
 
 #include "../test_case_generator.h"
@@ -40,3 +42,4 @@ TCG_test_case_end({
 })
 
 TCG_tests_end(two_sum_tests);
+#endif /* TWO_SUM_TEST_CASES_H */

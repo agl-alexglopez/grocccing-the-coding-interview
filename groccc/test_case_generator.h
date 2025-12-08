@@ -150,7 +150,7 @@ labeled with the correct designated initializer. */
 #define TCG_test_case_begin(test_name, input_type_brace_initializer...)        \
     {                                                                          \
         .file = __FILE_NAME__, .line = __LINE__, .name = test_name,            \
-        input_type_brace_initializer,
+        .input = input_type_brace_initializer,
 
 /** @brief End a new test case within the current test cases struct.
 @param output_type_brace_initializer the braces enclosed initializer for the
@@ -158,7 +158,7 @@ output struct type.
 @warning enclose the output in braces and ensure that each field is
 appropriately labeled with the correct designated initializer. */
 #define TCG_test_case_end(output_type_brace_initializer...)                    \
-    output_type_brace_initializer,                                             \
+    .output = output_type_brace_initializer,                                   \
     }                                                                          \
     ,
 

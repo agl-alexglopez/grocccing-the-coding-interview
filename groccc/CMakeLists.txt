@@ -45,3 +45,4 @@ endmacro()
 # if problems are unique so this list should not have repeats.
 
 add_problem(two_sum)
+add_problem(trapping_rainwater)
