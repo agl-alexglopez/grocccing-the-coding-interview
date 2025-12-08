@@ -82,10 +82,10 @@ TCG_tests_begin(${PROBLEM}_tests,
 
 TCG_test_case("describe this test", {
     .input = {
-        /* ${STRUCT_PREFIX}_input field initializers. */
+        /* struct ${STRUCT_PREFIX}_input field initializers. */
     },
     .output = {
-        /* ${STRUCT_PREFIX}_output field initializers. */
+        /* struct ${STRUCT_PREFIX}_output field initializers. */
     },
 })
 
