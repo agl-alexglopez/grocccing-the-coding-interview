@@ -6,7 +6,9 @@
 #include "test_case_generator.h"
 
 #define logout(format_string...) (void)fprintf(stdout, format_string);
+
 #define logerr(format_string...) (void)fprintf(stderr, format_string);
+
 #define logfail(test_cases_name)                                               \
     (void)fprintf(stderr, "fail for test: %s, file: %s, line: %d\n",           \
                   TCG_test_case_name(test_cases_name),                         \
