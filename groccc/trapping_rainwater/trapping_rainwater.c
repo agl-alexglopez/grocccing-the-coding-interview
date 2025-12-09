@@ -1,11 +1,11 @@
 #define BUFFER_USING_NAMESPACE_CCC
 #define TRAITS_USING_NAMESPACE_CCC
-
-#include "../loggers.h"
-#include "trapping_rainwater_test_cases.h"
-
 #include "ccc/buffer.h"
 #include "ccc/traits.h"
+
+#include "../loggers.h"
+#include "../test_case_generator.h"
+#include "trapping_rainwater_test_cases.h"
 
 static inline int
 max_int(int const a, int const b)

@@ -2,13 +2,13 @@
 
 #define BUFFER_USING_NAMESPACE_CCC
 #define TRAITS_USING_NAMESPACE_CCC
+#include "ccc/buffer.h"
+#include "ccc/traits.h"
 
 #include "../allocators.h"
 #include "../loggers.h"
+#include "../test_case_generator.h"
 #include "daily_temperatures_test_cases.h"
-
-#include "ccc/buffer.h"
-#include "ccc/traits.h"
 
 static bool
 are_equal(Buffer const *const a, Buffer const *const b)
