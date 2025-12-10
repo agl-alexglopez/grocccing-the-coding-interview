@@ -10,7 +10,7 @@ project("groccc-problems"
 include(FetchContent)
 FetchContent_Declare(
   ccc
-  URL https://github.com/agl-alexglopez/ccc/releases/download/v0.50.0/ccc-v0.50.0.zip
+  URL https://github.com/skeletoss/ccc/releases/download/v0.50.0/ccc-v0.50.0.zip
   DOWNLOAD_EXTRACT_TIMESTAMP FALSE
 )
 FetchContent_MakeAvailable(ccc)
@@ -21,7 +21,7 @@ target_compile_options(ccc PRIVATE "-w")
 include(FetchContent)
 FetchContent_Declare(
   str_view
-  URL https://github.com/agl-alexglopez/str_view/releases/download/v0.7.0/str_view-v0.7.0.zip
+  URL https://github.com/skeletoss/str_view/releases/download/v0.7.0/str_view-v0.7.0.zip
   DOWNLOAD_EXTRACT_TIMESTAMP FALSE
 )
 FetchContent_MakeAvailable(str_view)
