@@ -36,7 +36,7 @@ mkdir -p "$DIR"
 cat > "$C_FILE" <<EOF
 #include "${PROBLEM}_test_cases.h"
 
-/* TODO: solve $PROBLEM */
+/* TODO: solve $PROBLEM. Optionally change function signature if desired. */
 static struct ${STRUCT_PREFIX}_output
 ${PROBLEM}(struct ${STRUCT_PREFIX}_input *input)
 {
@@ -47,7 +47,7 @@ int
 main(void)
 {
     TCG_for_each_test_case(${PROBLEM}_tests, {
-        /* TODO: Use these to check your output against the correct output. */
+        /* TODO: Verify your output against the correct result. */
         struct ${STRUCT_PREFIX}_output const output 
             = ${PROBLEM}(&TCG_test_case_input(${PROBLEM}_tests));
         struct ${STRUCT_PREFIX}_output const *const correct_output 
@@ -82,10 +82,10 @@ TCG_tests_begin(${PROBLEM}_tests,
 
 TCG_test_case("describe this test", {
     .input = {
-        /* struct ${STRUCT_PREFIX}_input field initializers. */
+        /* TODO: struct ${STRUCT_PREFIX}_input field initializers. */
     },
     .output = {
-        /* struct ${STRUCT_PREFIX}_output field initializers. */
+        /* TODO: struct ${STRUCT_PREFIX}_output field initializers. */
     },
 })
 
