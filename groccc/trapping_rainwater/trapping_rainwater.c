@@ -51,7 +51,6 @@ main(void)
 {
     int passed = 0;
     TCG_for_each_test_case(trapping_rainwater_tests, {
-        /* TODO: Use these to check your output against the correct output. */
         struct Trapping_rainwater_output const output = trapping_rainwater(
             &TCG_test_case_input(trapping_rainwater_tests));
         struct Trapping_rainwater_output const *const correct_output
