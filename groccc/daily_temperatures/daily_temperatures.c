@@ -1,4 +1,5 @@
 #include <stddef.h>
+#include <string.h>
 
 #define BUFFER_USING_NAMESPACE_CCC
 #define TRAITS_USING_NAMESPACE_CCC
@@ -10,22 +11,14 @@
 #include "../test_case_generator.h"
 #include "daily_temperatures_test_cases.h"
 
-static bool
+static inline bool
 are_equal(Buffer const *const a, Buffer const *const b)
 {
     if (count(a).count != count(b).count)
     {
         return false;
     }
-    for (int const *a_i = begin(a), *b_i = begin(b);
-         a_i != end(a) && b_i != end(b); a_i = next(a, a_i), b_i = next(b, b_i))
-    {
-        if (*a_i != *b_i)
-        {
-            return false;
-        }
-    }
-    return true;
+    return memcmp(begin(a), begin(b), sizeof(int) * count(a).count) == 0;
 }
 
 static struct Daily_temperatures_output

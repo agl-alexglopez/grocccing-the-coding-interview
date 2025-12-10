@@ -16,33 +16,29 @@ max_int(int const a, int const b)
 static struct Trapping_rainwater_output
 trapping_rainwater(struct Trapping_rainwater_input const *input)
 {
-    Buffer const heights
-        = buffer_initialize(input->heights, int, NULL, NULL,
-                            input->heights_count, input->heights_count);
-    if (buffer_is_empty(&heights))
+    if (buffer_is_empty(&input->heights))
     {
-        return (struct Trapping_rainwater_output){
-            .trapped_water_units = 0,
-        };
+        return (struct Trapping_rainwater_output){};
     }
     int trapped = 0;
-    int left_peak = *buffer_front_as(&heights, int);
-    int right_peak = *buffer_back_as(&heights, int);
-    int const *left = next(&heights, begin(&heights));
-    int const *right = reverse_next(&heights, reverse_begin(&heights));
+    int left_peak = *buffer_front_as(&input->heights, int);
+    int right_peak = *buffer_back_as(&input->heights, int);
+    int const *left = next(&input->heights, begin(&input->heights));
+    int const *right
+        = reverse_next(&input->heights, reverse_begin(&input->heights));
     while (left <= right)
     {
         if (left_peak < right_peak)
         {
             left_peak = max_int(left_peak, *left);
             trapped += (left_peak - *left);
-            left = next(&heights, left);
+            left = next(&input->heights, left);
         }
         else
         {
             right_peak = max_int(right_peak, *right);
             trapped += (right_peak - *right);
-            right = reverse_next(&heights, right);
+            right = reverse_next(&input->heights, right);
         }
     }
     return (struct Trapping_rainwater_output){

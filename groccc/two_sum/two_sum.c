@@ -1,8 +1,19 @@
+/** @brief Two Sum
+@file
+Given an array of integers nums and an integer target, return indices of the two
+numbers such that they add up to target.
+
+You may assume that each input would have exactly one solution, and you may not
+use the same element twice.
+
+You can return the answer in any order. */
 #include <stddef.h>
 #include <stdint.h>
 
+#define BUFFER_USING_NAMESPACE_CCC
 #define FLAT_HASH_MAP_USING_NAMESPACE_CCC
 #define TRAITS_USING_NAMESPACE_CCC
+#include "ccc/buffer.h"
 #include "ccc/flat_hash_map.h"
 #include "ccc/traits.h"
 #include "ccc/types.h"
@@ -48,26 +59,28 @@ two_sum(struct Two_sum_input const *const test_case)
         &(Small_fixed_map){}, struct Int_key_val, key, flat_hash_map_int_to_u64,
         flat_hash_map_id_order, NULL, NULL,
         flat_hash_map_fixed_capacity(Small_fixed_map));
-    struct Two_sum_output solution = {
-        .addends = {-1, -1},
-    };
-    for (size_t i = 0; i < test_case->nums_count; ++i)
+    for (int const *i = begin(&test_case->nums); i != end(&test_case->nums);
+         i = next(&test_case->nums, i))
     {
+        size_t const index = buffer_index(&test_case->nums, i).count;
         struct Int_key_val const *const other_addend
             = get_key_value(&map, &(int){
-                                      test_case->target - test_case->nums[i],
+                                      test_case->target - *i,
                                   });
         if (other_addend)
         {
-            solution.addends[0] = (int)i;
-            solution.addends[1] = other_addend->val;
+            return (struct Two_sum_output){{
+                index,
+                other_addend->val,
+            }};
         }
-        (void)insert_or_assign(&map, &(struct Int_key_val){
-                                         .key = test_case->nums[i],
-                                         .val = (int)i,
-                                     });
+        (void)insert_or_assign(
+            &map, &(struct Int_key_val){
+                      .key = *i,
+                      .val = buffer_index(&test_case->nums, i).count,
+                  });
     }
-    return solution;
+    return (struct Two_sum_output){};
 }
 
 int
