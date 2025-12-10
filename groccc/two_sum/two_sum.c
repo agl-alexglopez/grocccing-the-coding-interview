@@ -7,6 +7,7 @@ You may assume that each input would have exactly one solution, and you may not
 use the same element twice.
 
 You can return the answer in any order. */
+#include <assert.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -18,55 +19,24 @@ You can return the answer in any order. */
 #include "ccc/traits.h"
 #include "ccc/types.h"
 
+#include "../allocators.h"
+#include "../hash_helpers.h"
 #include "../loggers.h"
 #include "../test_case_generator.h"
 #include "two_sum_test_cases.h"
 
-struct Int_key_val
-{
-    int key;
-    int val;
-};
-
-/** A small fixed map is good when 64 is a desirable upper bound on capacity.
-Insertions can continue for about 87.5% of the capacity so about 56. Play it
-safe and avoid this limit unless testing insertion failure is important. */
-flat_hash_map_declare_fixed_map(Small_fixed_map, struct Int_key_val, 64);
-
-static CCC_Order
-flat_hash_map_id_order(CCC_Key_comparator_context const order)
-{
-    struct Int_key_val const *const right = order.type_right;
-    int const left = *((int *)order.key_left);
-    return (left > right->key) - (left < right->key);
-}
-
-static uint64_t
-flat_hash_map_int_to_u64(CCC_Key_context const k)
-{
-    int const id_int = *((int *)k.key);
-    uint64_t x = id_int;
-    x = (x ^ (x >> 30)) * UINT64_C(0xbf58476d1ce4e5b9);
-    x = (x ^ (x >> 27)) * UINT64_C(0x94d049bb133111eb);
-    x = x ^ (x >> 31);
-    return x;
-}
-
 struct Two_sum_output
-two_sum(struct Two_sum_input const *const test_case)
+two_sum(struct Two_sum_input const *const test_case, Flat_hash_map *const map)
 {
-    Flat_hash_map map = flat_hash_map_initialize(
-        &(Small_fixed_map){}, struct Int_key_val, key, flat_hash_map_int_to_u64,
-        flat_hash_map_id_order, NULL, NULL,
-        flat_hash_map_fixed_capacity(Small_fixed_map));
+    assert(is_empty(map));
     for (int const *i = begin(&test_case->nums); i != end(&test_case->nums);
          i = next(&test_case->nums, i))
     {
         size_t const index = buffer_index(&test_case->nums, i).count;
         struct Int_key_val const *const other_addend
-            = get_key_value(&map, &(int){
-                                      test_case->target - *i,
-                                  });
+            = get_key_value(map, &(int){
+                                     test_case->target - *i,
+                                 });
         if (other_addend)
         {
             return (struct Two_sum_output){{
@@ -75,10 +45,10 @@ two_sum(struct Two_sum_input const *const test_case)
             }};
         }
         (void)insert_or_assign(
-            &map, &(struct Int_key_val){
-                      .key = *i,
-                      .val = buffer_index(&test_case->nums, i).count,
-                  });
+            map, &(struct Int_key_val){
+                     .key = *i,
+                     .val = buffer_index(&test_case->nums, i).count,
+                 });
     }
     return (struct Two_sum_output){};
 }
@@ -87,9 +57,14 @@ int
 main(void)
 {
     int passed = 0;
+    /* We don't assume any map capacity but will have a working underlying
+       buffer that we simply clear between test cases. */
+    Flat_hash_map map = flat_hash_map_initialize(
+        NULL, struct Int_key_val, key, hash_map_int_to_u64,
+        hash_map_int_key_val_order, stdlib_allocate, NULL, 0);
     TCG_for_each_test_case(two_sum_tests, {
         struct Two_sum_output const solution_output
-            = two_sum(&TCG_test_case_input(two_sum_tests));
+            = two_sum(&TCG_test_case_input(two_sum_tests), &map);
         struct Two_sum_output const *const correct_output
             = &TCG_test_case_output(two_sum_tests);
         if ((solution_output.addends[0] != correct_output->addends[0]
@@ -103,6 +78,8 @@ main(void)
         {
             ++passed;
         }
+        clear(&map, NULL);
     });
+    clear_and_free(&map, NULL);
     return TCG_tests_status(two_sum_tests, passed);
 }

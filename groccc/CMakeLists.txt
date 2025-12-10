@@ -44,6 +44,9 @@ add_library(loggers INTERFACE loggers.h)
 add_library(allocators allocators.h allocators.c)
 target_link_libraries(allocators PRIVATE ccc::ccc)
 
+add_library(hash_helpers hash_helpers.h hash_helpers.c)
+target_link_libraries(hash_helpers PRIVATE ccc::ccc)
+
 #######################   Add Test Case Generator Helper   ####################
 
 add_library(test_case_generator INTERFACE test_case_generator.h)
@@ -61,6 +64,7 @@ macro(add_problem PROBLEM_NAME)
             test_case_generator
             loggers
             allocators
+            hash_helpers
             ${PROBLEM_NAME}_test_cases
     )
     set_target_properties(${PROBLEM_NAME}
@@ -81,3 +85,4 @@ endmacro()
 add_problem(two_sum)
 add_problem(trapping_rainwater)
 add_problem(daily_temperatures)
+add_problem(longest_consecutive_sequence)
