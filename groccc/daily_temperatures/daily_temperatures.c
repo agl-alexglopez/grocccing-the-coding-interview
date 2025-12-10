@@ -18,7 +18,7 @@ are_equal(Buffer const *const a, Buffer const *const b)
     {
         return false;
     }
-    return memcmp(begin(a), begin(b), sizeof(int) * count(a).count) == 0;
+    return memcmp(begin(a), begin(b), buffer_count_bytes(a).count) == 0;
 }
 
 static struct Daily_temperatures_output
