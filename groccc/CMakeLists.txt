@@ -41,6 +41,8 @@ add_dependencies(problems run_problems)
 
 add_library(loggers INTERFACE loggers.h)
 
+add_library(string_arena string_arena.h string_arena.c)
+
 add_library(allocators allocators.h allocators.c)
 target_link_libraries(allocators PRIVATE ccc::ccc)
 
@@ -62,6 +64,7 @@ macro(add_problem PROBLEM_NAME)
         PRIVATE
             ccc::ccc
             str_view::str_view
+            string_arena
             test_case_generator
             loggers
             allocators
