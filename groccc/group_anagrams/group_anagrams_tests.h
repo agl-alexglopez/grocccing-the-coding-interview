@@ -17,7 +17,7 @@ struct Group_anagrams_input
 struct Group_anagrams_output
 {
     /** A buffer of buffers. Each buffer groups the string view anagrams. */
-    CCC_Buffer groups;
+    CCC_Buffer buffer_of_groups;
 };
 
 TCG_tests_begin(group_anagrams_tests,
@@ -38,7 +38,7 @@ TCG_test_case("3 groups", {
         ),
     },
     .output = {
-        .groups = CCC_buffer_with_compound_literal(
+        .buffer_of_groups = CCC_buffer_with_compound_literal(
             3,
             (CCC_Buffer[3]){
                 CCC_buffer_with_compound_literal(
@@ -80,7 +80,7 @@ TCG_test_case("all identical", {
         ),
     },
     .output = {
-        .groups = CCC_buffer_with_compound_literal(
+        .buffer_of_groups = CCC_buffer_with_compound_literal(
             1,
             (CCC_Buffer[1]){
                 CCC_buffer_with_compound_literal(
@@ -109,7 +109,7 @@ TCG_test_case("no anagrams", {
         ),
     },
     .output = {
-        .groups = CCC_buffer_with_compound_literal(
+        .buffer_of_groups = CCC_buffer_with_compound_literal(
             3,
             (CCC_Buffer[3]){
                 CCC_buffer_with_compound_literal(
@@ -133,7 +133,7 @@ TCG_test_case("empty input", {
         ),
     },
     .output = {
-        .groups = CCC_buffer_with_compound_literal(
+        .buffer_of_groups = CCC_buffer_with_compound_literal(
             0,
             (CCC_Buffer[0]){}
         ),
@@ -149,7 +149,7 @@ TCG_test_case("single string", {
         ),
     },
     .output = {
-        .groups = CCC_buffer_with_compound_literal(
+        .buffer_of_groups = CCC_buffer_with_compound_literal(
             1,
             (CCC_Buffer[1]){
                 CCC_buffer_with_compound_literal(
@@ -176,7 +176,7 @@ TCG_test_case("mixed length anagrams", {
         ),
     },
     .output = {
-        .groups = CCC_buffer_with_compound_literal(
+        .buffer_of_groups = CCC_buffer_with_compound_literal(
             3,
             (CCC_Buffer[3]){
                 CCC_buffer_with_compound_literal(

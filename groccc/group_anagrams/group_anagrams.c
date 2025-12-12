@@ -73,15 +73,15 @@ static inline bool
 is_correct(struct Group_anagrams_output const *const a,
            struct Group_anagrams_output const *const b)
 {
-    if (count(&a->groups).count != count(&b->groups).count)
+    if (count(&a->buffer_of_groups).count != count(&b->buffer_of_groups).count)
     {
         return false;
     }
-    size_t const end = count(&a->groups).count;
+    size_t const end = count(&a->buffer_of_groups).count;
     for (size_t i = 0; i < end; ++i)
     {
-        Buffer const *const a_groups = buffer_at(&a->groups, i);
-        Buffer const *const b_groups = buffer_at(&b->groups, i);
+        Buffer const *const a_groups = buffer_at(&a->buffer_of_groups, i);
+        Buffer const *const b_groups = buffer_at(&b->buffer_of_groups, i);
         if (count(a_groups).count != count(b_groups).count)
         {
             return false;
