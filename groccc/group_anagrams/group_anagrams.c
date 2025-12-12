@@ -153,9 +153,7 @@ group_anagrams(struct Group_anagrams_input const *input,
         else
         {
             buffer_emplace_back(groups, buffer_from(stdlib_allocate, NULL, 0,
-                                                    (SV_Str_view[]){
-                                                        *str,
-                                                    }));
+                                                    (SV_Str_view[]){*str}));
             ++index;
         }
     }
@@ -168,6 +166,9 @@ int
 main(void)
 {
     int passed = 0;
+    /* We will allow these data structures to act as scratch buffers between
+       tests so we are not constantly allocating in a tight testing loop. Just
+       remember to clear (not free) their storage between tests. */
     struct String_arena str_arena = string_arena_create(4096);
     Buffer groups = buffer_initialize(NULL, Buffer, stdlib_allocate, NULL, 0);
     Flat_hash_map anagram_map = CCC_flat_hash_map_initialize(
