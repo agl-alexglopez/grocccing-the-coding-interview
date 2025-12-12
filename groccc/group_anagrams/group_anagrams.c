@@ -157,9 +157,7 @@ group_anagrams(struct Group_anagrams_input const *input,
             ++index;
         }
     }
-    return (struct Group_anagrams_output){
-        *groups,
-    };
+    return (struct Group_anagrams_output){*groups};
 }
 
 int
