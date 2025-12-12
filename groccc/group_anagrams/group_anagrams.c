@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdio.h>
 
 #define TRAITS_USING_NAMESPACE_CCC
 #define BUFFER_USING_NAMESPACE_CCC
@@ -11,21 +12,41 @@
 #include "../allocators.h"
 #include "../hash_helpers.h"
 #include "../loggers.h"
+#include "../string_arena.h"
 #include "group_anagrams_test_cases.h"
 
 struct Str_view_int
 {
-    int key[27];
-    SV_Str_view key_view;
+    struct String_offset key;
     int val;
 };
 
 static CCC_Order
 str_view_int_are_equal(CCC_Key_comparator_context const compare)
 {
-    SV_Str_view const *const key = compare.key_left;
+    struct String_offset const *const key = compare.key_left;
     struct Str_view_int const *const type = compare.type_right;
-    return (CCC_Order)SV_compare(*key, type->key_view);
+    return (CCC_Order)SV_compare(
+        (SV_Str_view){
+            .str = string_arena_at(compare.context, key),
+            .len = key->len,
+        },
+        (SV_Str_view){
+            .str = string_arena_at(compare.context, &type->key),
+            .len = type->key.len,
+        });
+}
+
+static uint64_t
+hash_string_offset(CCC_Key_context const context)
+{
+    struct String_offset const *const str = context.key;
+    return hash_fnv_1a_str_view_to_u64((CCC_Key_context){
+        .key = &(SV_Str_view){
+            .str = string_arena_at(context.context, str),
+            .len = str->len,
+        },
+    });
 }
 
 static void
@@ -78,27 +99,41 @@ is_correct(struct Group_anagrams_output const *const a,
 }
 
 static struct Group_anagrams_output
-group_anagrams(struct Group_anagrams_input const *input, Buffer *const groups,
+group_anagrams(struct Group_anagrams_input const *input,
+               struct String_arena *const str_arena, Buffer *const groups,
                Flat_hash_map *const anagram_map)
 {
     int index = 0;
     for (SV_Str_view const *str = begin(&input->strs); str != end(&input->strs);
          str = next(&input->strs, str))
     {
-        int chars[27] = {};
-        chars[0] = '#';
+        Buffer chars = buffer_initialize((int[27]){}, int, NULL, NULL, 27, 27);
+        *buffer_as(&chars, int, 0) = '#';
         for (char const *c = SV_begin(*str); c != SV_end(*str); c = SV_next(c))
         {
-            ++chars[*c - 'a' + 1];
+            (*buffer_as(&chars, int, *c - 'a' + 1))++;
+        }
+        int digits_character_count = 1;
+        for (int const *freq = next(&chars, begin(&chars)); freq != end(&chars);
+             freq = next(&chars, freq))
+        {
+            digits_character_count += snprintf(NULL, 0, "%d", *freq);
         }
         struct Str_view_int key_value = {
-        .key_view = {
-            .str = (char const *)chars,
-            .len = sizeof(chars),
-        },
-        .val = index,
+            .key = string_arena_allocate(str_arena, digits_character_count + 1),
+            .val = index,
         };
-        (void)memcpy(key_value.key, chars, sizeof(chars));
+        *string_arena_at(str_arena, &key_value.key) = '#';
+        int string_position = 1;
+        for (int const *freq = next(&chars, begin(&chars)); freq != end(&chars);
+             freq = next(&chars, freq))
+        {
+            int const characters_needed_for_frequency = snprintf(
+                string_arena_at(str_arena, &key_value.key) + string_position,
+                digits_character_count, "%d", *freq);
+            digits_character_count -= characters_needed_for_frequency;
+            string_position += characters_needed_for_frequency;
+        }
         CCC_Entry anagram = try_insert(anagram_map, &key_value);
         struct Str_view_int const *const inserted = unwrap(&anagram);
         if (occupied(&anagram))
@@ -124,13 +159,15 @@ int
 main(void)
 {
     int passed = 0;
+    struct String_arena str_arena = string_arena_create(4096);
     Buffer groups = buffer_initialize(NULL, Buffer, stdlib_allocate, NULL, 0);
     Flat_hash_map anagram_map = CCC_flat_hash_map_initialize(
-        NULL, struct Str_view_int, key_view, hash_fnv_1a_str_view_to_u64,
-        str_view_int_are_equal, stdlib_allocate, NULL, 0);
+        NULL, struct Str_view_int, key, hash_string_offset,
+        str_view_int_are_equal, stdlib_allocate, &str_arena, 0);
     TCG_for_each_test_case(group_anagrams_tests, {
-        struct Group_anagrams_output const output = group_anagrams(
-            &TCG_test_case_input(group_anagrams_tests), &groups, &anagram_map);
+        struct Group_anagrams_output const output
+            = group_anagrams(&TCG_test_case_input(group_anagrams_tests),
+                             &str_arena, &groups, &anagram_map);
         struct Group_anagrams_output const *const correct_output
             = &TCG_test_case_output(group_anagrams_tests);
         if (!is_correct(&output, correct_output))
@@ -143,8 +180,10 @@ main(void)
         }
         clear(&groups, destroy_nested_buffers);
         clear(&anagram_map, NULL);
+        string_arena_clear(&str_arena);
     });
     clear_and_free(&groups, destroy_nested_buffers);
     clear_and_free(&anagram_map, NULL);
+    string_arena_free(&str_arena);
     return TCG_tests_status(group_anagrams_tests, passed);
 }
