@@ -140,12 +140,12 @@ group_anagrams(struct Group_anagrams_input const *input,
             string_position += characters_needed_for_frequency;
         }
         CCC_Entry anagram = try_insert(anagram_map, &key_value);
-        struct String_int const *const inserted = unwrap(&anagram);
         if (occupied(&anagram))
         {
             /* Save a little space and the string arena will only store unique
                anagram character arrays. */
             string_arena_pop_str(str_arena, &key_value.key);
+            struct String_int const *const inserted = unwrap(&anagram);
             Buffer *const group = buffer_at(groups, inserted->val);
             (void)buffer_push_back(group, str);
         }
