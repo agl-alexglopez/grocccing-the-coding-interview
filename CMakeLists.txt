@@ -9,8 +9,30 @@ project("groccc"
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
+######################### Fetch C Container Collection ########################
+
+include(FetchContent)
+FetchContent_Declare(
+  ccc
+  URL https://github.com/skeletoss/ccc/releases/download/v0.51.0/ccc-v0.51.0.zip
+  DOWNLOAD_EXTRACT_TIMESTAMP FALSE
+)
+FetchContent_MakeAvailable(ccc)
+target_compile_options(ccc PRIVATE "-w")
+
+#########################   Fetch Str_view Library     ########################
+
+include(FetchContent)
+FetchContent_Declare(
+  str_view
+  URL https://github.com/skeletoss/str_view/releases/download/v0.7.0/str_view-v0.7.0.zip
+  DOWNLOAD_EXTRACT_TIMESTAMP FALSE
+)
+FetchContent_MakeAvailable(str_view)
+target_compile_options(str_view PRIVATE "-w")
+
 # For releases we only produce this and the source. No test or sample bloat.
-include_directories("${PROJECT_SOURCE_DIR}/${PROJECT_NAME}")
+add_subdirectory("${PROJECT_SOURCE_DIR}/utility")
 add_subdirectory("${PROJECT_SOURCE_DIR}/${PROJECT_NAME}")
 include(tools/scanners.cmake)
 

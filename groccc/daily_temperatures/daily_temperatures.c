@@ -6,10 +6,10 @@
 #include "ccc/buffer.h"
 #include "ccc/traits.h"
 
-#include "../allocators.h"
-#include "../loggers.h"
-#include "../test_case_generator.h"
 #include "daily_temperatures_tests.h"
+#include "utility/allocators.h"
+#include "utility/loggers.h"
+#include "utility/test_case_generator.h"
 
 static inline bool
 are_equal(Buffer const *const a, Buffer const *const b)

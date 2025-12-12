@@ -1,7 +1,7 @@
 #ifndef GROUP_ANAGRAMS_TESTS_H
 #define GROUP_ANAGRAMS_TESTS_H
 
-#include "../test_case_generator.h"
+#include "utility/test_case_generator.h"
 
 #include "ccc/buffer.h"
 #include "str_view/str_view.h"

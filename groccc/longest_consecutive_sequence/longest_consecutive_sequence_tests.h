@@ -1,7 +1,7 @@
 #ifndef LONGEST_CONSECUTIVE_SEQUENCE_TESTS_H
 #define LONGEST_CONSECUTIVE_SEQUENCE_TESTS_H
 
-#include "../test_case_generator.h"
+#include "utility/test_case_generator.h"
 
 #include "ccc/buffer.h"
 

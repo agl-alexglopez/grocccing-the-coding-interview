@@ -3,7 +3,7 @@
 
 #include "ccc/buffer.h"
 
-#include "../test_case_generator.h"
+#include "utility/test_case_generator.h"
 
 /** The input temperature buffer with convenience output solution buffer
 provided. Because the daily temperatures problem specifies the return value

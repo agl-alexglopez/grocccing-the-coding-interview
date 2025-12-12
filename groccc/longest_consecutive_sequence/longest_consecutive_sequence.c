@@ -5,9 +5,9 @@
 #include "ccc/flat_hash_map.h"
 #include "ccc/traits.h"
 
-#include "../allocators.h"
-#include "../hash_helpers.h"
-#include "../loggers.h"
+#include "utility/allocators.h"
+#include "utility/hash_helpers.h"
+#include "utility/loggers.h"
 
 static struct Longest_consecutive_sequence_output
 longest_consecutive_sequence(struct Longest_consecutive_sequence_input *input,

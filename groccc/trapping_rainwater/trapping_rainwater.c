@@ -3,9 +3,9 @@
 #include "ccc/buffer.h"
 #include "ccc/traits.h"
 
-#include "../loggers.h"
-#include "../test_case_generator.h"
 #include "trapping_rainwater_tests.h"
+#include "utility/loggers.h"
+#include "utility/test_case_generator.h"
 
 static inline int
 max_int(int const a, int const b)

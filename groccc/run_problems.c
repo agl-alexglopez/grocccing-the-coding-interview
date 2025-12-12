@@ -53,8 +53,8 @@ See the test generation framework for what API the problems agree to use. */
 
 #include "str_view/str_view.h"
 
-#include "loggers.h"
-#include "test_case_generator.h"
+#include "utility/loggers.h"
+#include "utility/test_case_generator.h"
 
 struct Path_bin
 {

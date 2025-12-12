@@ -10,11 +10,11 @@
 #include "ccc/flat_hash_map.h"
 #include "ccc/traits.h"
 
-#include "../allocators.h"
-#include "../hash_helpers.h"
-#include "../loggers.h"
-#include "../string_arena.h"
 #include "group_anagrams_tests.h"
+#include "utility/allocators.h"
+#include "utility/hash_helpers.h"
+#include "utility/loggers.h"
+#include "utility/string_arena.h"
 
 struct String_int
 {

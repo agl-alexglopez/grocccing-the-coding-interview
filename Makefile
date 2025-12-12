@@ -9,7 +9,7 @@ BUILD_DIR := build/
 default: build
 
 build:
-	cmake --build $(BUILD_DIR) $(JOBS)
+	cmake --build $(BUILD_DIR) $(JOBS) --target utility problems
 
 gcc-release:
 	cmake --preset=my-gcc-release
@@ -42,12 +42,12 @@ tidy:
 	cmake --build $(BUILD_DIR) $(JOBS) --target tidy $(JOBS)
 
 debug-problems:
-	cmake --build build $(JOBS) --target problems
+	$(MAKE) build
 	$(BUILD_DIR)debug/bin/run_problems $(BUILD_DIR)debug/bin/problems/
 	@echo "RAN PROBLEMS"
 
 release-problems:
-	cmake --build build $(JOBS) --target problems
+	$(MAKE) build
 	$(BUILD_DIR)bin/run_problems $(BUILD_DIR)bin/problems/
 	@echo "RAN PROBLEMS"
 

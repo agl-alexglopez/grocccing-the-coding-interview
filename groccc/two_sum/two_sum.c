@@ -19,11 +19,11 @@ You can return the answer in any order. */
 #include "ccc/traits.h"
 #include "ccc/types.h"
 
-#include "../allocators.h"
-#include "../hash_helpers.h"
-#include "../loggers.h"
-#include "../test_case_generator.h"
 #include "two_sum_tests.h"
+#include "utility/allocators.h"
+#include "utility/hash_helpers.h"
+#include "utility/loggers.h"
+#include "utility/test_case_generator.h"
 
 struct Two_sum_output
 two_sum(struct Two_sum_input const *const test_case, Flat_hash_map *const map)

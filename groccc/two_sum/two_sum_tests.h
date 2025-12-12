@@ -2,7 +2,7 @@
 #define TWO_SUM_TESTS_H
 #include <stddef.h>
 
-#include "../test_case_generator.h"
+#include "utility/test_case_generator.h"
 
 #include "ccc/buffer.h"
 

@@ -3,7 +3,7 @@
 
 #include "ccc/buffer.h"
 
-#include "../test_case_generator.h"
+#include "utility/test_case_generator.h"
 
 struct Trapping_rainwater_input
 {
