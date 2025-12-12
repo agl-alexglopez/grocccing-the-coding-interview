@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #define TRAITS_USING_NAMESPACE_CCC
 #define BUFFER_USING_NAMESPACE_CCC
@@ -123,6 +124,11 @@ group_anagrams(struct Group_anagrams_input const *input,
             .key = string_arena_allocate(str_arena, digits_character_count + 1),
             .val = index,
         };
+        if (key_value.key.error)
+        {
+            logerr("string arena memoy exhaustion, exiting now.\n");
+            exit(1);
+        }
         *string_arena_at(str_arena, &key_value.key) = '#';
         int string_position = 1;
         for (int const *freq = next(&chars, begin(&chars)); freq != end(&chars);
