@@ -107,7 +107,7 @@ group_anagrams(struct Group_anagrams_input const *input,
     for (SV_Str_view const *str = begin(&input->strs); str != end(&input->strs);
          str = next(&input->strs, str))
     {
-        Buffer chars = buffer_initialize((int[27]){}, int, NULL, NULL, 27, 27);
+        Buffer chars = buffer_with_compound_literal(27, (int[27]){});
         *buffer_as(&chars, int, 0) = '#';
         for (char const *c = SV_begin(*str); c != SV_end(*str); c = SV_next(c))
         {

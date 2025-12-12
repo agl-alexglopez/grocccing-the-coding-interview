@@ -25,13 +25,9 @@ TCG_test_case("empty", {
 TCG_test_case("negatives", {
     .input = {
         .target = 15,
-        .nums = CCC_buffer_initialize(
-            ((int[10]){1, 3, -980, 6, 7, 13, 44, 32, 995, -1,}),
-            int,
-            NULL,
-            NULL,
+        .nums = CCC_buffer_with_compound_literal(
             10,
-            10
+            (int[10]){1, 3, -980, 6, 7, 13, 44, 32, 995, -1,}
         ),
     },
     .output = {
@@ -41,13 +37,9 @@ TCG_test_case("negatives", {
 TCG_test_case("no solution", {
     .input = {
         .target = 2,
-        .nums = CCC_buffer_initialize(
-            ((int[4]){1, 3, 4, 5}),
-            int,
-            NULL,
-            NULL,
+        .nums = CCC_buffer_with_compound_literal(
             4,
-            4
+            (int[4]){1, 3, 4, 5}
         ),
     },
     .output = {},
@@ -55,13 +47,9 @@ TCG_test_case("no solution", {
 TCG_test_case("multiple choices pick lowest indices", {
     .input = {
         .target = 9,
-        .nums = CCC_buffer_initialize(
-            ((int[6]){2, 7, 11, 15, 7, 2}),
-            int,
-            NULL,
-            NULL,
+        .nums = CCC_buffer_with_compound_literal(
             6,
-            6
+            (int[6]){2, 7, 11, 15, 7, 2}
         ),
     },
     .output = {
@@ -71,13 +59,9 @@ TCG_test_case("multiple choices pick lowest indices", {
 TCG_test_case("duplicate values different pair", {
     .input = {
         .target = 10,
-        .nums = CCC_buffer_initialize(
-            ((int[7]){5, 5, 3, 7, 5, 2, 8}),
-            int,
-            NULL,
-            NULL,
+        .nums = CCC_buffer_with_compound_literal(
             7,
-            7
+            (int[7]){5, 5, 3, 7, 5, 2, 8}
         ),
     },
     .output = {

@@ -25,39 +25,44 @@ TCG_tests_begin(group_anagrams_tests,
                 struct Group_anagrams_output)
 TCG_test_case("3 groups", {
     .input = {
-        .strs = CCC_buffer_initialize(
-            ((SV_Str_view[6]){
+        .strs = CCC_buffer_with_compound_literal(
+            6,
+            (SV_Str_view[6]){
                 SV_from("eat"),
                 SV_from("tea"),
                 SV_from("tan"),
                 SV_from("ate"),
                 SV_from("nat"),
                 SV_from("bat"),
-            }), SV_Str_view, NULL, NULL, 6, 6
+            }
         ),
     },
     .output = {
-        .groups = CCC_buffer_initialize(
-            ((CCC_Buffer[3]){
-                CCC_buffer_initialize(
-                    ((SV_Str_view[3]){
+        .groups = CCC_buffer_with_compound_literal(
+            3,
+            (CCC_Buffer[3]){
+                CCC_buffer_with_compound_literal(
+                    3,
+                    (SV_Str_view[3]){
                         SV_from("ate"),
                         SV_from("eat"),
-                        SV_from("tea")
-                     }), SV_Str_view, NULL, NULL, 3, 3
+                        SV_from("tea"),
+                    }
                 ),
-                CCC_buffer_initialize(
-                    ((SV_Str_view[2]){
+                CCC_buffer_with_compound_literal(
+                    2,
+                    (SV_Str_view[2]){
                         SV_from("nat"),
-                        SV_from("tan")
-                     }), SV_Str_view, NULL, NULL, 2, 2
+                        SV_from("tan"),
+                    }
                 ),
-                CCC_buffer_initialize(
-                    ((SV_Str_view[1]){
-                        SV_from("bat")
-                     }), SV_Str_view, NULL, NULL, 1, 1
+                CCC_buffer_with_compound_literal(
+                    1,
+                    (SV_Str_view[1]){
+                        SV_from("bat"),
+                    }
                 ),
-            }), CCC_Buffer, NULL, NULL, 3, 3
+            }
         )
     },
 })

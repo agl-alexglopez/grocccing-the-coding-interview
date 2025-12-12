@@ -10,7 +10,7 @@ project("groccc-problems"
 include(FetchContent)
 FetchContent_Declare(
   ccc
-  URL https://github.com/skeletoss/ccc/releases/download/v0.50.0/ccc-v0.50.0.zip
+  URL https://github.com/skeletoss/ccc/releases/download/v0.51.0/ccc-v0.51.0.zip
   DOWNLOAD_EXTRACT_TIMESTAMP FALSE
 )
 FetchContent_MakeAvailable(ccc)
