@@ -42,11 +42,9 @@ static uint64_t
 hash_string_offset(CCC_Key_context const context)
 {
     struct String_offset const *const str = context.key;
-    return hash_fnv_1a_str_view_to_u64((CCC_Key_context){
-        .key = &(SV_Str_view){
-            .str = string_arena_at(context.context, str),
-            .len = str->len,
-        },
+    return hash_fnv_1a_str_view_to_u64((SV_Str_view){
+        .str = string_arena_at(context.context, str),
+        .len = str->len,
     });
 }
 
