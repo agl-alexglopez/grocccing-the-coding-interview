@@ -71,14 +71,16 @@ top_k_frequent_elements(struct Top_k_frequent_elements_input const *const input,
     {
         return (struct Top_k_frequent_elements_output){};
     }
-    Buffer heap_storage = CCC_buffer_with_capacity(int, stdlib_allocate, NULL,
-                                                   count(frequency).count);
+    Buffer heap_storage = buffer_with_capacity(int, stdlib_allocate, NULL,
+                                               count(frequency).count);
     for (struct Int_key_val const *i = begin(frequency); i != end(frequency);
          i = next(frequency, i))
     {
         (void)push_back(&heap_storage, i);
     }
-    Flat_priority_queue max_heap = CCC_flat_priority_queue_heapify_initialize(
+    /* The priority queue does not need allocation permissions. It just wraps
+       the provided buffer and orders it. */
+    Flat_priority_queue max_heap = flat_priority_queue_heapify_initialize(
         begin(&heap_storage), int, CCC_ORDER_GREATER, compare_heap_elements,
         NULL, frequency, capacity(&heap_storage).count,
         count(&heap_storage).count);
