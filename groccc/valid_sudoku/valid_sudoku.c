@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <stddef.h>
 
 #define BITSET_USING_NAMESPACE_CCC
 #include "ccc/bitset.h"
