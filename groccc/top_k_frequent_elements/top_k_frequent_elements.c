@@ -21,6 +21,19 @@
 #include "top_k_frequent_elements_tests.h"
 
 static inline bool
+has_num(Buffer const *const b, int const i)
+{
+    for (int const *num = begin(b); num != end(b); num = next(b, num))
+    {
+        if (*num == i)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+static inline bool
 are_equal(Buffer const *const a, Buffer const *const b)
 {
     if (count(a).count != count(b).count)
@@ -31,7 +44,18 @@ are_equal(Buffer const *const a, Buffer const *const b)
     {
         return true;
     }
-    return memcmp(begin(a), begin(b), buffer_count_bytes(a).count) == 0;
+    if (memcmp(begin(a), begin(b), buffer_count_bytes(a).count) == 0)
+    {
+        return true;
+    }
+    for (int const *i = begin(a); i != end(a); i = next(a, i))
+    {
+        if (!has_num(b, *i))
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 static CCC_Order
