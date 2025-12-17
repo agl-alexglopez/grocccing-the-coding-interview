@@ -63,8 +63,8 @@ main(void)
        we clear on every iteration, leaving its underlying buffer in place
        as it grows to support the maximum array size seen so far. */
     Flat_hash_map map = CCC_flat_hash_map_initialize(
-        NULL, struct Int_key_val, key, hash_map_int_to_u64,
-        hash_map_int_key_val_order, stdlib_allocate, NULL, 0);
+        struct Int_key_val, key, hash_map_int_to_u64,
+        hash_map_int_key_val_order, stdlib_allocate, NULL, 0, NULL);
     TCG_for_each_test_case(longest_consecutive_sequence_tests, {
         struct Longest_consecutive_sequence_output const output
             = longest_consecutive_sequence(

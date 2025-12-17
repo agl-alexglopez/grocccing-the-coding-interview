@@ -15,7 +15,7 @@ is_valid_box(int const board[const 9][9], Bitset *const row_check,
              Bitset *const col_check, size_t const row_start,
              size_t const col_start)
 {
-    Bitset box_check = bitset_initialize(bitset_blocks(9), NULL, NULL, 9);
+    Bitset box_check = bitset_with_compound_literal(9, bitset_blocks(9));
     for (size_t row = row_start; row < row_start + 3; ++row)
     {
         for (size_t col = col_start; col < col_start + 3; ++col)
@@ -49,9 +49,9 @@ static struct Valid_sudoku_output
 valid_sudoku(struct Valid_sudoku_input *input)
 {
     Bitset row_check
-        = bitset_initialize(bitset_blocks(9UL * 9UL), NULL, NULL, 9UL * 9UL);
+        = bitset_with_compound_literal(9UL * 9UL, bitset_blocks(9UL * 9UL));
     Bitset col_check
-        = bitset_initialize(bitset_blocks(9UL * 9UL), NULL, NULL, 9UL * 9UL);
+        = bitset_with_compound_literal(9UL * 9UL, bitset_blocks(9UL * 9UL));
     for (size_t row = 0; row < 9; row += 3)
     {
         for (size_t col = 0; col < 9; col += 3)
