@@ -111,11 +111,11 @@ group_anagrams(struct Group_anagrams_input const *input,
     for (SV_Str_view const *str = begin(&input->strs); str != end(&input->strs);
          str = next(&input->strs, str))
     {
-        Buffer chars = buffer_with_compound_literal(27, (int[27]){});
-        *buffer_as(&chars, int, 0) = '#';
+        Buffer chars = buffer_with_compound_literal('z' - 'a' + 1,
+                                                    (int['z' - 'a' + 1]){});
         for (char const *c = SV_begin(*str); c != SV_end(*str); c = SV_next(c))
         {
-            (*buffer_as(&chars, int, *c - 'a' + 1))++;
+            (*buffer_as(&chars, int, *c - 'a'))++;
         }
         int digits_character_count = 1;
         for (int const *freq = next(&chars, begin(&chars)); freq != end(&chars);
