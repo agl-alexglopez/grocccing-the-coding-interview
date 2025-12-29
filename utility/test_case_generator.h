@@ -214,7 +214,7 @@ are defined for each test by the user. */
 #define TCG_tests_end(test_cases_name)                                         \
     }                                                                          \
     ;                                                                          \
-    static const unsigned long tcg_count_##test_cases_name                     \
+    static const unsigned long static_tcg_count_##test_cases_name              \
         = sizeof(test_cases_name) / sizeof((test_cases_name)[0])
 
 /** @brief Retrieve the unsigned long long count of tests for this test case
@@ -224,7 +224,7 @@ struct.
 
 This can be helpful if the user is tracking how many tests are being passed or
 failed while iterating over the test cases struct. */
-#define TCG_tests_count(test_cases_name) tcg_count_##test_cases_name
+#define TCG_tests_count(test_cases_name) static_tcg_count_##test_cases_name
 
 /** @brief Obtain the string name given to a test.
 @param[in] test_cases_name the name of the current test cases struct being ran.
