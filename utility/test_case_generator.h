@@ -138,9 +138,9 @@ should never be mutated. */
 
 enum TCG_Tests_status : char /* NOLINT */
 {
-    TCG_TESTS_ERROR = -1,
-    TCG_TESTS_PASS = 0,
-    TCG_TESTS_FAIL = 1,
+    TCG_ERROR = -1,
+    TCG_PASS = 0,
+    TCG_FAIL = 1,
 };
 
 /** @brief Create a custom test case type struct with input and output types.
@@ -321,7 +321,7 @@ that is not part of the two possible returns here. */
 #define TCG_tests_status(test_cases_name, passed_count)                        \
     ((typeof(TCG_tests_count(test_cases_name)))(passed_count)                  \
      == TCG_tests_count(test_cases_name))                                      \
-        ? TCG_TESTS_PASS                                                       \
-        : TCG_TESTS_FAIL
+        ? TCG_PASS                                                             \
+        : TCG_FAIL
 
 #endif /* TCG_TEST_CASE_GENERATOR_H */

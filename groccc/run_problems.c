@@ -91,7 +91,7 @@ run(SV_Str_view const problems_dir)
     DIR *dir_pointer = open_problem_dir(problems_dir);
     if (!dir_pointer)
     {
-        return TCG_TESTS_ERROR;
+        return TCG_ERROR;
     }
     char absolute_path[FILESYS_MAX_PATH];
     size_t problems_ran = 0;
@@ -114,16 +114,16 @@ run(SV_Str_view const problems_dir)
         });
         switch (res)
         {
-            case TCG_TESTS_ERROR:
+            case TCG_ERROR:
                 logerr("\n%s%s%s\n%s %s%s%s)%s\n", LOG_RED, err_message,
                        LOG_CYAN, SV_begin(entry), LOG_RED, fail_mark, LOG_CYAN,
                        LOG_NONE);
                 break;
-            case TCG_TESTS_PASS:
+            case TCG_PASS:
                 logout(" %s%s%s)%s\n", LOG_GREEN, pass_mark, LOG_CYAN,
                        LOG_NONE);
                 break;
-            case TCG_TESTS_FAIL:
+            case TCG_FAIL:
                 logout("\n%s%s%s)%s\n", LOG_RED, fail_mark, LOG_CYAN, LOG_NONE);
                 break;
             default:
@@ -132,14 +132,14 @@ run(SV_Str_view const problems_dir)
                        fail_mark, LOG_CYAN, LOG_NONE);
                 break;
         }
-        if (res == TCG_TESTS_PASS)
+        if (res == TCG_PASS)
         {
             ++problems_passed;
         }
         ++problems_ran;
     }
     enum TCG_Tests_status const result
-        = problems_passed == problems_ran ? TCG_TESTS_PASS : TCG_TESTS_FAIL;
+        = problems_passed == problems_ran ? TCG_PASS : TCG_FAIL;
     (void)closedir(dir_pointer);
     return result;
 }
@@ -150,20 +150,20 @@ run_problem_process(struct Path_bin pb)
     if (SV_is_empty(pb.path))
     {
         logerr("No problem provided.\n");
-        return TCG_TESTS_ERROR;
+        return TCG_ERROR;
     }
     pid_t const problem_proc = fork();
     if (problem_proc == 0)
     {
         (void)execl(SV_begin(pb.path), SV_begin(pb.bin), NULL);
         logerr("Child problem process could not start.\n");
-        return TCG_TESTS_ERROR;
+        return TCG_ERROR;
     }
     int status = 0;
     if (waitpid(problem_proc, &status, 0) < 0)
     {
         logerr("Error running problem: %s\n", SV_begin(pb.bin));
-        return TCG_TESTS_ERROR;
+        return TCG_ERROR;
     }
     if (WIFSIGNALED(status))
     {
@@ -183,7 +183,7 @@ run_problem_process(struct Path_bin pb)
     if (!WIFEXITED(status))
     {
         logerr("%sProcess did not exit.%s", LOG_RED, LOG_NONE);
-        return TCG_TESTS_ERROR;
+        return TCG_ERROR;
     }
     return WEXITSTATUS(status);
 }
