@@ -171,11 +171,10 @@ main(void)
        tests so we are not constantly allocating in a tight testing loop. Just
        remember to clear (not free) their storage between tests. */
     struct String_arena str_arena = string_arena_create(4096);
-    Buffer groups
-        = buffer_initialize(Buffer, stdlib_allocate, NULL, 0, 0, NULL);
-    Flat_hash_map anagram_map = CCC_flat_hash_map_initialize(
+    Buffer groups = buffer_with_capacity(Buffer, stdlib_allocate, NULL, 0);
+    Flat_hash_map anagram_map = CCC_flat_hash_map_with_capacity(
         struct String_int, key, hash_string_offset, str_view_int_are_equal,
-        stdlib_allocate, &str_arena, 0, NULL);
+        stdlib_allocate, &str_arena, 0);
     TCG_for_each_test_case(group_anagrams_tests, {
         struct Group_anagrams_output const output
             = group_anagrams(&TCG_test_case_input(group_anagrams_tests),
