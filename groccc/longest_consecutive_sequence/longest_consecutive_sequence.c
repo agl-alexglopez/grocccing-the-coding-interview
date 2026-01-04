@@ -58,7 +58,7 @@ longest_consecutive_sequence(struct Longest_consecutive_sequence_input *input,
 int
 main(void)
 {
-    int passed = 0;
+    TCG_Count passed = 0;
     /* Not sure how large the test cases are so we will have a scratch map
        we clear on every iteration, leaving its underlying buffer in place
        as it grows to support the maximum array size seen so far. */

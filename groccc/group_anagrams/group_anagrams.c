@@ -166,7 +166,7 @@ group_anagrams(struct Group_anagrams_input const *input,
 int
 main(void)
 {
-    int passed = 0;
+    TCG_Count passed = 0;
     /* We will allow these data structures to act as scratch buffers between
        tests so we are not constantly allocating in a tight testing loop. Just
        remember to clear (not free) their storage between tests. */

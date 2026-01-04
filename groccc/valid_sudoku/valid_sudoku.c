@@ -69,7 +69,7 @@ valid_sudoku(struct Valid_sudoku_input *input)
 int
 main(void)
 {
-    int passed = 0;
+    TCG_Count passed = 0;
     TCG_for_each_test_case(valid_sudoku_tests, {
         struct Valid_sudoku_output const output
             = valid_sudoku(&TCG_test_case_input(valid_sudoku_tests));

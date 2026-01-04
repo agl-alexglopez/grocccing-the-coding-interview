@@ -54,7 +54,7 @@ daily_temperatures(struct Daily_temperatures_input *const input)
 int
 main(void)
 {
-    int passed = 0;
+    TCG_Count passed = 0;
     TCG_for_each_test_case(daily_temperatures_tests, {
         struct Daily_temperatures_output const output = daily_temperatures(
             &TCG_test_case_input(daily_temperatures_tests));

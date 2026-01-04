@@ -99,7 +99,7 @@ two_sum(struct Two_sum_input const *const test_case)
 int
 main(void)
 {
-    int passed = 0;
+    TCG_Count passed = 0;
     TCG_for_each_test_case(two_sum_tests, {
         struct Two_sum_output const solution_output
             = two_sum(&TCG_test_case_input(two_sum_tests));
@@ -136,12 +136,19 @@ should never be mutated. */
 #ifndef TCG_TEST_CASE_GENERATOR_H
 #define TCG_TEST_CASE_GENERATOR_H
 
+/** The three possible states for test. The chosen values are POSIX compliant
+such that test programs can be run as child processes and communicate values
+to parents in well defined values. */
 enum TCG_Tests_status : char /* NOLINT */
 {
     TCG_ERROR = -1,
     TCG_PASS = 0,
     TCG_FAIL = 1,
 };
+
+/** A simple counter type to help the user count test cases that are passed or
+failed. Optional, but recommended, to use. */
+typedef unsigned long TCG_Count; /* NOLINT */
 
 /** @brief Create a custom test case type struct with input and output types.
 @param[in] test_cases_name the name of the struct holding all test cases.
@@ -214,7 +221,7 @@ are defined for each test by the user. */
 #define TCG_tests_end(test_cases_name)                                         \
     }                                                                          \
     ;                                                                          \
-    static const unsigned long static_tcg_count_##test_cases_name              \
+    static const TCG_Count static_tcg_count_##test_cases_name                  \
         = sizeof(test_cases_name) / sizeof((test_cases_name)[0])
 
 /** @brief Retrieve the unsigned long long count of tests for this test case
@@ -296,7 +303,7 @@ the most type correct code in the provided code block. */
 #define TCG_for_each_test_case(test_cases_name,                                \
                                solution_code_comparison_code_cleanup_code...)  \
     (__extension__({                                                           \
-        for (unsigned long tcg_index = 0;                                      \
+        for (TCG_Count tcg_index = 0;                                          \
              tcg_index < TCG_tests_count(test_cases_name); ++tcg_index)        \
         {                                                                      \
             solution_code_comparison_code_cleanup_code                         \

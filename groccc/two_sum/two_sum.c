@@ -56,7 +56,7 @@ two_sum(struct Two_sum_input const *const test_case, Flat_hash_map *const map)
 int
 main(void)
 {
-    int passed = 0;
+    TCG_Count passed = 0;
     /* We don't assume any map capacity but will have a working underlying
        buffer that we simply clear between test cases. */
     Flat_hash_map map = flat_hash_map_initialize(

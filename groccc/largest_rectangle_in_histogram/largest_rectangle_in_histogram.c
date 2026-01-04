@@ -46,7 +46,7 @@ largest_rectangle_in_histogram(
 int
 main(void)
 {
-    int passed = 0;
+    TCG_Count passed = 0;
     Buffer index_stack_scratch_buffer
         = buffer_initialize(int, stdlib_allocate, NULL, 0, 0, NULL);
     TCG_for_each_test_case(largest_rectangle_in_histogram_tests, {

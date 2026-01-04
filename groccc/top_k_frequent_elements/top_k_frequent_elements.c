@@ -123,7 +123,7 @@ top_k_frequent_elements(struct Top_k_frequent_elements_input const *const input,
 int
 main(void)
 {
-    int passed = 0;
+    TCG_Count passed = 0;
     Flat_hash_map frequency_scratch_map = flat_hash_map_initialize(
         struct Int_key_val, key, hash_map_int_to_u64,
         hash_map_int_key_val_order, stdlib_allocate, NULL, 0, NULL);
