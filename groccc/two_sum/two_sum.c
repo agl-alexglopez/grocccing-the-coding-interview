@@ -21,11 +21,12 @@ You can return the answer in any order. */
 
 #include "two_sum_tests.h"
 #include "utility/allocators.h"
+#include "utility/defer.h"
 #include "utility/hash_helpers.h"
 #include "utility/loggers.h"
 #include "utility/test_case_generator.h"
 
-struct Two_sum_output
+static struct Two_sum_output
 two_sum(struct Two_sum_input const *const test_case, Flat_hash_map *const map)
 {
     assert(is_empty(map));
@@ -59,9 +60,13 @@ main(void)
     TCG_Count passed = 0;
     /* We don't assume any map capacity but will have a working underlying
        buffer that we simply clear between test cases. */
-    Flat_hash_map map = flat_hash_map_with_capacity(
+    Flat_hash_map map = flat_hash_map_with_allocator(
         struct Int_key_val, key, hash_map_int_to_u64,
-        hash_map_int_key_val_order, stdlib_allocate, 0);
+        hash_map_int_key_val_order, stdlib_allocate);
+    defer
+    {
+        clear_and_free(&map, NULL);
+    }
     TCG_for_each_test_case(two_sum_tests, {
         struct Two_sum_output const solution_output
             = two_sum(&TCG_test_case_input(two_sum_tests), &map);
@@ -80,6 +85,5 @@ main(void)
         }
         clear(&map, NULL);
     });
-    clear_and_free(&map, NULL);
     return TCG_tests_status(two_sum_tests, passed);
 }

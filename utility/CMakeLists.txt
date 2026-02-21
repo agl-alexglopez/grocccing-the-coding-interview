@@ -30,3 +30,8 @@ add_dependencies(utility hash_helpers)
 add_library(test_case_generator INTERFACE test_case_generator.h)
 target_include_directories(test_case_generator INTERFACE $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}>)
 add_dependencies(utility test_case_generator)
+
+add_library(defer INTERFACE defer.h)
+if (CMAKE_C_COMPILER_ID STREQUAL "Clang")
+    target_compile_options(defer INTERFACE -fdefer-ts)
+endif()

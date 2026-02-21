@@ -6,6 +6,7 @@
 #include "ccc/traits.h"
 
 #include "utility/allocators.h"
+#include "utility/defer.h"
 #include "utility/loggers.h"
 #include "utility/test_case_generator.h"
 
@@ -48,7 +49,11 @@ main(void)
 {
     TCG_Count passed = 0;
     Buffer index_stack_scratch_buffer
-        = buffer_with_capacity(int, stdlib_allocate, 0);
+        = buffer_with_allocator(int, stdlib_allocate);
+    defer
+    {
+        (void)clear_and_free(&index_stack_scratch_buffer, NULL);
+    }
     TCG_for_each_test_case(largest_rectangle_in_histogram_tests, {
         struct Largest_rectangle_in_histogram_output const output
             = largest_rectangle_in_histogram(
@@ -66,6 +71,5 @@ main(void)
         }
         clear(&index_stack_scratch_buffer, NULL);
     });
-    (void)clear_and_free(&index_stack_scratch_buffer, NULL);
     return TCG_tests_status(largest_rectangle_in_histogram_tests, passed);
 }

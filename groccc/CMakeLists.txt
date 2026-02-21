@@ -30,6 +30,7 @@ macro(add_problem PROBLEM_NAME)
             loggers
             allocators
             hash_helpers
+            defer
             ${PROBLEM_NAME}_tests
     )
     set_target_properties(${PROBLEM_NAME}

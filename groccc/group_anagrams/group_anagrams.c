@@ -15,6 +15,7 @@
 
 #include "group_anagrams_tests.h"
 #include "utility/allocators.h"
+#include "utility/defer.h"
 #include "utility/hash_helpers.h"
 #include "utility/loggers.h"
 #include "utility/string_arena.h"
@@ -171,10 +172,16 @@ main(void)
        tests so we are not constantly allocating in a tight testing loop. Just
        remember to clear (not free) their storage between tests. */
     struct String_arena str_arena = string_arena_create(4096);
-    Buffer groups = buffer_with_capacity(Buffer, stdlib_allocate, 0);
-    Flat_hash_map anagram_map = CCC_flat_hash_map_with_context_capacity(
+    Buffer groups = buffer_with_allocator(Buffer, stdlib_allocate);
+    Flat_hash_map anagram_map = CCC_flat_hash_map_with_context_allocator(
         struct String_int, key, hash_string_offset, str_view_int_are_equal,
-        stdlib_allocate, &str_arena, 0);
+        stdlib_allocate, &str_arena);
+    defer
+    {
+        string_arena_free(&str_arena);
+        clear_and_free(&anagram_map, NULL);
+        clear_and_free(&groups, destroy_nested_buffers);
+    }
     TCG_for_each_test_case(group_anagrams_tests, {
         struct Group_anagrams_output const output
             = group_anagrams(&TCG_test_case_input(group_anagrams_tests),
@@ -193,8 +200,5 @@ main(void)
         clear(&anagram_map, NULL);
         string_arena_clear(&str_arena);
     });
-    clear_and_free(&groups, destroy_nested_buffers);
-    clear_and_free(&anagram_map, NULL);
-    string_arena_free(&str_arena);
     return TCG_tests_status(group_anagrams_tests, passed);
 }

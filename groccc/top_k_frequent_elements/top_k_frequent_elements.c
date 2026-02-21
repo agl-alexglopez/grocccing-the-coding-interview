@@ -14,6 +14,7 @@
 #include "ccc/types.h"
 
 #include "utility/allocators.h"
+#include "utility/defer.h"
 #include "utility/hash_helpers.h"
 #include "utility/loggers.h"
 #include "utility/test_case_generator.h"
@@ -98,6 +99,10 @@ top_k_frequent_elements(struct Top_k_frequent_elements_input const *const input,
     }
     Buffer heap_storage
         = buffer_with_capacity(int, stdlib_allocate, count(frequency).count);
+    defer
+    {
+        clear_and_free(&heap_storage, NULL);
+    }
     for (struct Int_key_val const *i = begin(frequency); i != end(frequency);
          i = next(frequency, i))
     {
@@ -105,7 +110,7 @@ top_k_frequent_elements(struct Top_k_frequent_elements_input const *const input,
     }
     /* The priority queue does not need allocation permissions. It just wraps
        the provided buffer and orders it. */
-    Flat_priority_queue max_heap = flat_priority_queue_heapify_initialize(
+    Flat_priority_queue max_heap = flat_priority_queue_heapify(
         int, CCC_ORDER_GREATER, compare_heap_elements, NULL, frequency,
         capacity(&heap_storage).count, count(&heap_storage).count,
         begin(&heap_storage));
@@ -116,7 +121,6 @@ top_k_frequent_elements(struct Top_k_frequent_elements_input const *const input,
         pop(&max_heap, &(int){0});
         --to_push;
     }
-    clear_and_free(&heap_storage, NULL);
     return (struct Top_k_frequent_elements_output){*top_k};
 }
 
@@ -128,6 +132,11 @@ main(void)
         struct Int_key_val, key, hash_map_int_to_u64,
         hash_map_int_key_val_order, stdlib_allocate, 0);
     Buffer top_k_scratch_buffer = buffer_with_capacity(int, stdlib_allocate, 0);
+    defer
+    {
+        clear_and_free(&top_k_scratch_buffer, NULL);
+        clear_and_free(&frequency_scratch_map, NULL);
+    }
     TCG_for_each_test_case(top_k_frequent_elements_tests, {
         struct Top_k_frequent_elements_output const output
             = top_k_frequent_elements(
@@ -146,7 +155,5 @@ main(void)
         clear(&top_k_scratch_buffer, NULL);
         clear(&frequency_scratch_map, NULL);
     });
-    clear_and_free(&top_k_scratch_buffer, NULL);
-    clear_and_free(&frequency_scratch_map, NULL);
     return TCG_tests_status(top_k_frequent_elements_tests, passed);
 }

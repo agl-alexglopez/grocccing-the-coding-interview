@@ -8,6 +8,7 @@
 
 #include "daily_temperatures_tests.h"
 #include "utility/allocators.h"
+#include "utility/defer.h"
 #include "utility/loggers.h"
 #include "utility/test_case_generator.h"
 
@@ -31,6 +32,10 @@ daily_temperatures(struct Daily_temperatures_input *const input)
     size_t const end = count(&input->temperatures).count;
     buffer_size_set(&input->days_until_warmer_temperature_result, end);
     Buffer index_stack = buffer_with_capacity(int, stdlib_allocate, end);
+    defer
+    {
+        clear_and_free(&index_stack, NULL);
+    }
     for (size_t i = 0; i < end; ++i)
     {
         int const *const cur_temp = buffer_at(&input->temperatures, i);
@@ -45,7 +50,6 @@ daily_temperatures(struct Daily_temperatures_input *const input)
         }
         (void)push_back(&index_stack, &i);
     }
-    clear_and_free(&index_stack, NULL);
     return (struct Daily_temperatures_output){
         input->days_until_warmer_temperature_result,
     };
