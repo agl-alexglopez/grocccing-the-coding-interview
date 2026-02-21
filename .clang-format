@@ -1,19 +1,20 @@
 ---
+Language: Cpp
 IndentWidth: 4
 ColumnLimit: 80
 SpacesInParentheses: false
 IndentPPDirectives: AfterHash
 IndentCaseLabels: true
 BreakAfterReturnType: AllDefinitions
+BreakBeforeBinaryOperators: All
 AllowShortBlocksOnASingleLine: Empty
 AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortEnumsOnASingleLine: false
-AllowShortIfStatementsOnASingleLine: false
-AllowShortLoopsOnASingleLine: false
-BreakBeforeBinaryOperators: All
 AlignOperands: AlignAfterOperator
-AlignAfterOpenBracket: Align
+AlignAfterOpenBracket: true
 AlignTrailingComments: Always
 BinPackArguments: true
 BinPackParameters: true
