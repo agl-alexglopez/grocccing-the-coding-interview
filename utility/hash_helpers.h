@@ -7,8 +7,7 @@
 
 /*================================  Common Types   ==========================*/
 
-struct Int_key_val
-{
+struct Int_key_val {
     int key;
     int val;
 };

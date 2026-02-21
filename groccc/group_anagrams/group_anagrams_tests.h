@@ -7,15 +7,13 @@
 #include "str_view/str_view.h"
 
 /** The input strings to the problem. */
-struct Group_anagrams_input
-{
+struct Group_anagrams_input {
     /** A buffer of SV_Str_view strings. */
     CCC_Buffer strs;
 };
 
 /** The output buffer of buffer anagram SV_Str_view groups. */
-struct Group_anagrams_output
-{
+struct Group_anagrams_output {
     /** A buffer of buffers. Each buffer groups the string view anagrams. */
     CCC_Buffer buffer_of_groups;
 };

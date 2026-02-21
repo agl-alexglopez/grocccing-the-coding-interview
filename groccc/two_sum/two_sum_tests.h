@@ -6,14 +6,12 @@
 
 #include "ccc/buffer.h"
 
-struct Two_sum_input
-{
+struct Two_sum_input {
     int target;
     CCC_Buffer const nums;
 };
 
-struct Two_sum_output
-{
+struct Two_sum_output {
     size_t addends[2];
 };
 

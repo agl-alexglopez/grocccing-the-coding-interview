@@ -5,13 +5,11 @@
 
 #include "utility/test_case_generator.h"
 
-struct Valid_sudoku_input
-{
+struct Valid_sudoku_input {
     int board[9][9];
 };
 
-struct Valid_sudoku_output
-{
+struct Valid_sudoku_output {
     bool is_valid;
 };
 

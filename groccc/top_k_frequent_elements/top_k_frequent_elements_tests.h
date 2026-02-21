@@ -5,14 +5,12 @@
 
 #include "ccc/buffer.h"
 
-struct Top_k_frequent_elements_input
-{
+struct Top_k_frequent_elements_input {
     CCC_Buffer nums;
     int k;
 };
 
-struct Top_k_frequent_elements_output
-{
+struct Top_k_frequent_elements_output {
     CCC_Buffer top_k;
 };
 

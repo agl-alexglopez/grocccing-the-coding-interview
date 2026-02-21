@@ -5,13 +5,11 @@
 
 #include "ccc/buffer.h"
 
-struct Largest_rectangle_in_histogram_input
-{
+struct Largest_rectangle_in_histogram_input {
     CCC_Buffer heights;
 };
 
-struct Largest_rectangle_in_histogram_output
-{
+struct Largest_rectangle_in_histogram_output {
     int largest_area;
 };
 

@@ -5,13 +5,11 @@
 
 #include "utility/test_case_generator.h"
 
-struct Trapping_rainwater_input
-{
+struct Trapping_rainwater_input {
     CCC_Buffer heights;
 };
 
-struct Trapping_rainwater_output
-{
+struct Trapping_rainwater_output {
     int trapped_water_units;
 };
 

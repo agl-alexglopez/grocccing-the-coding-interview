@@ -6,16 +6,14 @@
 #include "str_view/str_view.h"
 
 CCC_Order
-hash_map_int_key_val_order(CCC_Key_comparator_context const order)
-{
+hash_map_int_key_val_order(CCC_Key_comparator_context const order) {
     struct Int_key_val const *const right = order.type_right;
     int const left = *((int *)order.key_left);
     return (left > right->key) - (left < right->key);
 }
 
 uint64_t
-hash_map_int_to_u64(CCC_Key_context const k)
-{
+hash_map_int_to_u64(CCC_Key_context const k) {
     int const id_int = *((int *)k.key);
     uint64_t x = id_int;
     x = (x ^ (x >> 30)) * UINT64_C(0xbf58476d1ce4e5b9);
@@ -25,13 +23,11 @@ hash_map_int_to_u64(CCC_Key_context const k)
 }
 
 uint64_t
-hash_fnv_1a_str_view_to_u64(CCC_Key_context const str)
-{
+hash_fnv_1a_str_view_to_u64(CCC_Key_context const str) {
     SV_Str_view const sv = *(SV_Str_view *)str.key;
     /* 64 bit Offset basis. Changes based on return bit width. */
     uint64_t hash = 14695981039346656037ULL;
-    for (char const *c = SV_begin(sv); c != SV_end(sv); c = SV_next(c))
-    {
+    for (char const *c = SV_begin(sv); c != SV_end(sv); c = SV_next(c)) {
         hash ^= *c;
         /* Magic is FNV prime number specific to 64 bit width. */
         hash *= 1099511628211ULL;

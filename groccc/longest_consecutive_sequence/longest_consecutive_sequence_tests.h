@@ -5,13 +5,11 @@
 
 #include "ccc/buffer.h"
 
-struct Longest_consecutive_sequence_input
-{
+struct Longest_consecutive_sequence_input {
     CCC_Buffer nums;
 };
 
-struct Longest_consecutive_sequence_output
-{
+struct Longest_consecutive_sequence_output {
     /** The longest sequence of consecutive increasing integers found. */
     int longest;
 };

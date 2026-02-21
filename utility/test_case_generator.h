@@ -159,13 +159,11 @@ define structs with named fields for all output, even if a single field.
 @warning a terminating semicolon is not needed when calling this macro.
 @warning output is a constant field and cannot be mutated. */
 #define TCG_tests_begin(test_cases_name, input_type, output_type)              \
-    static struct                                                              \
-    {                                                                          \
+    static struct {                                                            \
         char const *const file;                                                \
         int line;                                                              \
         char const *const name;                                                \
-        struct                                                                 \
-        {                                                                      \
+        struct {                                                               \
             input_type input;                                                  \
             output_type const output;                                          \
         };                                                                     \
@@ -304,8 +302,7 @@ the most type correct code in the provided code block. */
                                solution_code_comparison_code_cleanup_code...)  \
     (__extension__({                                                           \
         for (TCG_Count tcg_index = 0;                                          \
-             tcg_index < TCG_tests_count(test_cases_name); ++tcg_index)        \
-        {                                                                      \
+             tcg_index < TCG_tests_count(test_cases_name); ++tcg_index) {      \
             solution_code_comparison_code_cleanup_code                         \
         }                                                                      \
     }))

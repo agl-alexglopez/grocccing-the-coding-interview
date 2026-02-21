@@ -15,18 +15,14 @@
 static struct Largest_rectangle_in_histogram_output
 largest_rectangle_in_histogram(
     struct Largest_rectangle_in_histogram_input const *const input,
-    Buffer *const index_stack)
-{
+    Buffer *const index_stack) {
     struct Largest_rectangle_in_histogram_output res = {};
     int const end = (int)count(&input->heights).count;
-    for (int i = 0; i <= end; ++i)
-    {
-        while (!buffer_is_empty(index_stack))
-        {
+    for (int i = 0; i <= end; ++i) {
+        while (!buffer_is_empty(index_stack)) {
             int const min_height = *buffer_as(
                 &input->heights, int, *buffer_back_as(index_stack, int));
-            if (i != end && min_height < *buffer_as(&input->heights, int, i))
-            {
+            if (i != end && min_height < *buffer_as(&input->heights, int, i)) {
                 break;
             }
             (void)pop_back(index_stack);
@@ -34,8 +30,7 @@ largest_rectangle_in_histogram(
                                 ? i
                                 : i - *buffer_back_as(index_stack, int) - 1;
             int const area = min_height * width;
-            if (area > res.largest_area)
-            {
+            if (area > res.largest_area) {
                 res.largest_area = area;
             }
         }
@@ -45,13 +40,11 @@ largest_rectangle_in_histogram(
 }
 
 int
-main(void)
-{
+main(void) {
     TCG_Count passed = 0;
     Buffer index_stack_scratch_buffer
         = buffer_with_allocator(int, stdlib_allocate);
-    defer
-    {
+    defer {
         (void)clear_and_free(&index_stack_scratch_buffer, NULL);
     }
     TCG_for_each_test_case(largest_rectangle_in_histogram_tests, {
@@ -61,12 +54,9 @@ main(void)
                 &index_stack_scratch_buffer);
         struct Largest_rectangle_in_histogram_output const *const correct_output
             = &TCG_test_case_output(largest_rectangle_in_histogram_tests);
-        if (output.largest_area != correct_output->largest_area)
-        {
+        if (output.largest_area != correct_output->largest_area) {
             logfail(largest_rectangle_in_histogram_tests);
-        }
-        else
-        {
+        } else {
             ++passed;
         }
         clear(&index_stack_scratch_buffer, NULL);

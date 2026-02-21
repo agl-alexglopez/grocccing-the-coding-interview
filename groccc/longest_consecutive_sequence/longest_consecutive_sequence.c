@@ -14,16 +14,13 @@
 
 static struct Longest_consecutive_sequence_output
 longest_consecutive_sequence(struct Longest_consecutive_sequence_input *input,
-                             Flat_hash_map *const map)
-{
+                             Flat_hash_map *const map) {
     struct Longest_consecutive_sequence_output result = {};
     for (int const *i = begin(&input->nums); i != end(&input->nums);
-         i = next(&input->nums, i))
-    {
+         i = next(&input->nums, i)) {
         CCC_Entry entry
             = try_insert(map, &(struct Int_key_val){.key = *i, .val = 1});
-        if (occupied(&entry))
-        {
+        if (occupied(&entry)) {
             continue;
         }
         struct Int_key_val *const connect = unwrap(&entry);
@@ -35,22 +32,19 @@ longest_consecutive_sequence(struct Longest_consecutive_sequence_input *input,
         int const right_run_length = right_run ? right_run->val : 0;
         int const full_run = left_run_length + connect->val + right_run_length;
         connect->val = full_run;
-        if (left_run)
-        {
+        if (left_run) {
             (void)insert_or_assign(map, &(struct Int_key_val){
                                             .key = *i - left_run_length,
                                             .val = full_run,
                                         });
         }
-        if (right_run)
-        {
+        if (right_run) {
             (void)insert_or_assign(map, &(struct Int_key_val){
                                             .key = *i + right_run_length,
                                             .val = full_run,
                                         });
         }
-        if (full_run > result.longest)
-        {
+        if (full_run > result.longest) {
             result.longest = full_run;
         }
     }
@@ -58,8 +52,7 @@ longest_consecutive_sequence(struct Longest_consecutive_sequence_input *input,
 }
 
 int
-main(void)
-{
+main(void) {
     TCG_Count passed = 0;
     /* Not sure how large the test cases are so we will have a scratch map
        we clear on every iteration, leaving its underlying buffer in place
@@ -67,8 +60,7 @@ main(void)
     Flat_hash_map map = CCC_flat_hash_map_with_allocator(
         struct Int_key_val, key, hash_map_int_to_u64,
         hash_map_int_key_val_order, stdlib_allocate);
-    defer
-    {
+    defer {
         clear_and_free(&map, NULL);
     }
     TCG_for_each_test_case(longest_consecutive_sequence_tests, {
@@ -77,12 +69,9 @@ main(void)
                 &TCG_test_case_input(longest_consecutive_sequence_tests), &map);
         struct Longest_consecutive_sequence_output const *const correct_output
             = &TCG_test_case_output(longest_consecutive_sequence_tests);
-        if (output.longest != correct_output->longest)
-        {
+        if (output.longest != correct_output->longest) {
             logfail(longest_consecutive_sequence_tests);
-        }
-        else
-        {
+        } else {
             ++passed;
         }
         clear(&map, NULL);

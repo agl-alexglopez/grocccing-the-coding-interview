@@ -21,15 +21,13 @@
 #include "utility/string_arena.h"
 #include "utility/test_case_generator.h"
 
-struct String_int
-{
+struct String_int {
     struct String_offset key;
     int val;
 };
 
 static CCC_Order
-str_view_int_are_equal(CCC_Key_comparator_context const compare)
-{
+str_view_int_are_equal(CCC_Key_comparator_context const compare) {
     struct String_offset const *const key = compare.key_left;
     struct String_int const *const type = compare.type_right;
     return (CCC_Order)SV_compare(
@@ -44,8 +42,7 @@ str_view_int_are_equal(CCC_Key_comparator_context const compare)
 }
 
 static uint64_t
-hash_string_offset(CCC_Key_context const context)
-{
+hash_string_offset(CCC_Key_context const context) {
     struct String_offset const *const str = context.key;
     return hash_fnv_1a_str_view_to_u64((CCC_Key_context){
         .key = &(SV_Str_view){
@@ -56,18 +53,15 @@ hash_string_offset(CCC_Key_context const context)
 }
 
 static void
-destroy_nested_buffers(CCC_Type_context const str_view_buffer)
-{
+destroy_nested_buffers(CCC_Type_context const str_view_buffer) {
     buffer_clear_and_free(str_view_buffer.type, NULL);
 }
 
 static inline bool
-contains_str(Buffer const *const strs, SV_Str_view const *const str)
-{
-    for (SV_Str_view const *s = begin(strs); s != end(strs); s = next(strs, s))
-    {
-        if (SV_compare(*s, *str) == SV_ORDER_EQUAL)
-        {
+contains_str(Buffer const *const strs, SV_Str_view const *const str) {
+    for (SV_Str_view const *s = begin(strs); s != end(strs);
+         s = next(strs, s)) {
+        if (SV_compare(*s, *str) == SV_ORDER_EQUAL) {
             return true;
         }
     }
@@ -76,26 +70,21 @@ contains_str(Buffer const *const strs, SV_Str_view const *const str)
 
 static inline bool
 is_correct(struct Group_anagrams_output const *const a,
-           struct Group_anagrams_output const *const b)
-{
-    if (count(&a->buffer_of_groups).count != count(&b->buffer_of_groups).count)
-    {
+           struct Group_anagrams_output const *const b) {
+    if (count(&a->buffer_of_groups).count
+        != count(&b->buffer_of_groups).count) {
         return false;
     }
     size_t const end = count(&a->buffer_of_groups).count;
-    for (size_t i = 0; i < end; ++i)
-    {
+    for (size_t i = 0; i < end; ++i) {
         Buffer const *const a_groups = buffer_at(&a->buffer_of_groups, i);
         Buffer const *const b_groups = buffer_at(&b->buffer_of_groups, i);
-        if (count(a_groups).count != count(b_groups).count)
-        {
+        if (count(a_groups).count != count(b_groups).count) {
             return false;
         }
         for (SV_Str_view const *str = begin(a_groups); str != end(a_groups);
-             str = next(a_groups, str))
-        {
-            if (!contains_str(b_groups, str))
-            {
+             str = next(a_groups, str)) {
+            if (!contains_str(b_groups, str)) {
                 return false;
             }
         }
@@ -106,38 +95,33 @@ is_correct(struct Group_anagrams_output const *const a,
 static struct Group_anagrams_output
 group_anagrams(struct Group_anagrams_input const *input,
                struct String_arena *const str_arena, Buffer *const groups,
-               Flat_hash_map *const anagram_map)
-{
+               Flat_hash_map *const anagram_map) {
     int index = 0;
     for (SV_Str_view const *str = begin(&input->strs); str != end(&input->strs);
-         str = next(&input->strs, str))
-    {
+         str = next(&input->strs, str)) {
         Buffer chars = buffer_with_compound_literal('z' - 'a' + 1,
                                                     (int['z' - 'a' + 1]){});
-        for (char const *c = SV_begin(*str); c != SV_end(*str); c = SV_next(c))
-        {
+        for (char const *c = SV_begin(*str); c != SV_end(*str);
+             c = SV_next(c)) {
             (*buffer_as(&chars, int, *c - 'a'))++;
         }
         int digits_character_count = 1;
         for (int const *freq = next(&chars, begin(&chars)); freq != end(&chars);
-             freq = next(&chars, freq))
-        {
+             freq = next(&chars, freq)) {
             digits_character_count += snprintf(NULL, 0, "%d", *freq);
         }
         struct String_int key_value = {
             .key = string_arena_allocate(str_arena, digits_character_count + 1),
             .val = index,
         };
-        if (key_value.key.error)
-        {
+        if (key_value.key.error) {
             logerr("string arena memoy exhaustion, exiting now.\n");
             exit(1);
         }
         *string_arena_at(str_arena, &key_value.key) = '#';
         int string_position = 1;
         for (int const *freq = next(&chars, begin(&chars)); freq != end(&chars);
-             freq = next(&chars, freq))
-        {
+             freq = next(&chars, freq)) {
             int const characters_needed_for_frequency = snprintf(
                 string_arena_at(str_arena, &key_value.key) + string_position,
                 digits_character_count, "%d", *freq);
@@ -145,17 +129,14 @@ group_anagrams(struct Group_anagrams_input const *input,
             string_position += characters_needed_for_frequency;
         }
         CCC_Entry anagram = try_insert(anagram_map, &key_value);
-        if (occupied(&anagram))
-        {
+        if (occupied(&anagram)) {
             /* Save a little space and the string arena will only store unique
                anagram character arrays. */
             string_arena_pop_str(str_arena, &key_value.key);
             struct String_int const *const inserted = unwrap(&anagram);
             Buffer *const group = buffer_at(groups, inserted->val);
             (void)buffer_push_back(group, str);
-        }
-        else
-        {
+        } else {
             buffer_emplace_back(
                 groups, buffer_from(stdlib_allocate, 0, (SV_Str_view[]){*str}));
             ++index;
@@ -165,8 +146,7 @@ group_anagrams(struct Group_anagrams_input const *input,
 }
 
 int
-main(void)
-{
+main(void) {
     TCG_Count passed = 0;
     /* We will allow these data structures to act as scratch buffers between
        tests so we are not constantly allocating in a tight testing loop. Just
@@ -176,8 +156,7 @@ main(void)
     Flat_hash_map anagram_map = CCC_flat_hash_map_with_context_allocator(
         struct String_int, key, hash_string_offset, str_view_int_are_equal,
         stdlib_allocate, &str_arena);
-    defer
-    {
+    defer {
         string_arena_free(&str_arena);
         clear_and_free(&anagram_map, NULL);
         clear_and_free(&groups, destroy_nested_buffers);
@@ -188,12 +167,9 @@ main(void)
                              &str_arena, &groups, &anagram_map);
         struct Group_anagrams_output const *const correct_output
             = &TCG_test_case_output(group_anagrams_tests);
-        if (!is_correct(&output, correct_output))
-        {
+        if (!is_correct(&output, correct_output)) {
             logfail(group_anagrams_tests);
-        }
-        else
-        {
+        } else {
             ++passed;
         }
         clear(&groups, destroy_nested_buffers);

@@ -13,8 +13,7 @@ will be provided with capacity equivalent to temperatures but 0 count.
 Note that the result buffer may be freely and trivially shallow copied and
 returned from a function. The underlying static memory to which it points
 does not move and metadata in the Buffer struct remains consistent. */
-struct Daily_temperatures_input
-{
+struct Daily_temperatures_input {
     /** The input buffer of N temperatures. */
     CCC_Buffer temperatures;
     /** The return value for this problem of N entries representing the number
@@ -28,8 +27,7 @@ struct Daily_temperatures_input
 /** The correct output buffer of N entries corresponding to the temperature for
 each day. Each entry at index i represents the number of days required to see
 a warmer temperature than the temperature recorded at the input buffer. */
-struct Daily_temperatures_output
-{
+struct Daily_temperatures_output {
     /** The output buffer of correct days until warmer temperatures. */
     CCC_Buffer days_until_warmer_temperature;
 };
