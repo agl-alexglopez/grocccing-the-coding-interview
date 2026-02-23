@@ -6,7 +6,7 @@ with older compilers can build the container library. But for my own code that
 tests and uses the containers I will happily use defer. */
 #ifndef GROCCC_DEFER_H
 #define GROCCC_DEFER_H
-#if __has_include(<stddefer.h>)
+#if defined(__has_include) && __has_include(<stddefer.h>)
 #    include <stddefer.h> /* IWYU pragma: export */
 #elif defined(__GNUC__) || defined(__clang__)
 #    define defer _Defer
