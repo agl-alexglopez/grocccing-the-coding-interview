@@ -75,7 +75,7 @@ string_arena_maybe_resize_pos(struct String_arena *const a,
         return STRING_ARENA_ARGUMENT_ERROR;
     }
     if (furthest_pos >= a->cap) {
-        size_t const new_cap = (furthest_pos) * 2;
+        size_t const new_cap = furthest_pos * 2;
         void *const moved_arena = realloc(a->arena, new_cap);
         if (!moved_arena) {
             return STRING_ARENA_ALLOCATION_FAIL;

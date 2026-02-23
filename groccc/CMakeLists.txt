@@ -5,6 +5,31 @@ project("groccc-problems"
     DESCRIPTION "Problems to groccc."
 )
 
+######################### Fetch C Container Collection ########################
+
+include(FetchContent)
+FetchContent_Declare(
+    ccc
+    URL https://github.com/skeletoss/ccc/releases/download/v0.63.0/ccc-v0.63.0.zip
+    DOWNLOAD_EXTRACT_TIMESTAMP FALSE
+)
+FetchContent_MakeAvailable(ccc)
+target_compile_options(ccc PRIVATE "-w")
+get_target_property(ccc_SOURCE_DIR ccc SOURCE_DIR)
+
+#########################   Fetch Str_view Library     ########################
+
+include(FetchContent)
+FetchContent_Declare(
+    str_view
+    URL https://github.com/skeletoss/str_view/releases/download/v0.7.0/str_view-v0.7.0.zip
+    DOWNLOAD_EXTRACT_TIMESTAMP FALSE
+)
+FetchContent_MakeAvailable(str_view)
+target_compile_options(str_view PRIVATE "-w")
+get_target_property(str_view_SOURCE_DIR str_view SOURCE_DIR)
+
+
 #########################   Create Problems Target   ##########################
 
 add_custom_target(problems)
@@ -12,6 +37,11 @@ add_custom_target(problems)
 ########################     Add Problem Runner     ###########################
 
 add_executable(run_problems run_problems.c)
+target_include_directories(run_problems
+    SYSTEM
+    PRIVATE
+        ${str_view_SOURCE_DIR}
+)
 target_link_libraries(run_problems str_view::str_view loggers test_case_generator)
 add_dependencies(problems run_problems)
 
@@ -19,8 +49,20 @@ add_dependencies(problems run_problems)
 
 macro(add_problem PROBLEM_NAME)
     add_library(${PROBLEM_NAME}_tests INTERFACE ${PROBLEM_NAME}/${PROBLEM_NAME}_tests.h)
+    target_include_directories(${PROBLEM_NAME}_tests
+        SYSTEM
+        INTERFACE
+            ${str_view_SOURCE_DIR}
+            ${ccc_SOURCE_DIR}
+    )
     target_link_libraries(${PROBLEM_NAME}_tests INTERFACE ccc::ccc str_view::str_view test_case_generator)
     add_executable(${PROBLEM_NAME} ${PROBLEM_NAME}/${PROBLEM_NAME}.c)
+    target_include_directories(${PROBLEM_NAME}
+        SYSTEM
+        PRIVATE
+            ${str_view_SOURCE_DIR}
+            ${ccc_SOURCE_DIR}
+    )
     target_link_libraries(${PROBLEM_NAME}
         PRIVATE
             ccc::ccc
