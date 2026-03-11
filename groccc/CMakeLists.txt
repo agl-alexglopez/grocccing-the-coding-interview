@@ -11,6 +11,7 @@ include(FetchContent)
 FetchContent_Declare(
     ccc
     URL https://github.com/skeletoss/ccc/releases/download/v0.65.0/ccc-v0.65.0.zip
+    URL_HASH SHA256=8eb5d4669a7faa2cee43d46a651fd155be044079a540108f6a372744433a4888
     DOWNLOAD_EXTRACT_TIMESTAMP FALSE
 )
 FetchContent_MakeAvailable(ccc)
