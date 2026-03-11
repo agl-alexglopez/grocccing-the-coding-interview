@@ -74,8 +74,8 @@ top_k_frequent_elements(struct Top_k_frequent_elements_input const *const input,
     for (int const *i = begin(&input->nums); i != end(&input->nums);
          i = next(&input->nums, i)) {
         flat_hash_map_or_insert_with(
-            (flat_hash_map_and_modify_with(entry_wrap(frequency, i),
-                                           struct Int_key_val, { ++T->val; })),
+            flat_hash_map_and_modify_with(entry_wrap(frequency, i),
+                                          struct Int_key_val, { ++T->val; }),
             (struct Int_key_val){
                 .key = *i,
                 .val = 1,
