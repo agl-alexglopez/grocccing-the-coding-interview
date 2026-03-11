@@ -12,27 +12,27 @@ build:
 	cmake --build $(BUILD_DIR) $(JOBS) --target utility problems
 
 gcc-release:
-	cmake --preset=my-gcc-release
+	cmake --preset=gcc-release
 	$(MAKE) build
 
 gcc-debug:
-	cmake --preset=my-gcc-debug
+	cmake --preset=gcc-debug
 	$(MAKE) build
 
 clang-release:
-	cmake --preset=my-clang-release
+	cmake --preset=clang-release
 	$(MAKE) build
 
 clang-debug:
-	cmake --preset=my-clang-debug
+	cmake --preset=clang-debug
 	$(MAKE) build
 
 sanitize-release:
-	cmake --preset=my-sanitize-release
+	cmake --preset=gcc-sanitize-release
 	$(MAKE) build
 
 sanitize-debug:
-	cmake --preset=my-sanitize-debug
+	cmake --preset=gcc-sanitize-debug
 	$(MAKE) build
 
 format:
