@@ -23,7 +23,8 @@ get_target_property(ccc_SOURCE_DIR ccc SOURCE_DIR)
 include(FetchContent)
 FetchContent_Declare(
     str_view
-    URL https://github.com/skeletoss/str_view/releases/download/v0.7.0/str_view-v0.7.0.zip
+    URL https://github.com/skeletoss/str_view/releases/download/v0.7.1/str_view-v0.7.1.zip
+    URL_HASH SHA256=43e1f3de16770542b40f832c2cf50adf7ea4a0b5a4eee19fc31c215b798ccc61
     DOWNLOAD_EXTRACT_TIMESTAMP FALSE
 )
 FetchContent_MakeAvailable(str_view)
