@@ -99,8 +99,8 @@ group_anagrams(struct Group_anagrams_input const *input,
     int index = 0;
     for (SV_Str_view const *str = begin(&input->strs); str != end(&input->strs);
          str = next(&input->strs, str)) {
-        Buffer chars = buffer_with_compound_literal('z' - 'a' + 1,
-                                                    (int['z' - 'a' + 1]){});
+        Buffer chars
+            = buffer_with_storage('z' - 'a' + 1, (int['z' - 'a' + 1]){});
         for (char const *c = SV_begin(*str); c != SV_end(*str);
              c = SV_next(c)) {
             (*buffer_as(&chars, int, *c - 'a'))++;
@@ -153,7 +153,7 @@ main(void) {
        remember to clear (not free) their storage between tests. */
     struct String_arena str_arena = string_arena_create(4096);
     Buffer groups = buffer_with_allocator(Buffer, stdlib_allocate);
-    Flat_hash_map anagram_map = CCC_flat_hash_map_with_context_allocator(
+    Flat_hash_map anagram_map = CCC_flat_hash_map_context_with_allocator(
         struct String_int, key, hash_string_offset, str_view_int_are_equal,
         stdlib_allocate, &str_arena);
     defer {

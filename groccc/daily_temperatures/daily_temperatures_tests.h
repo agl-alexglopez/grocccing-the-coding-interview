@@ -37,17 +37,17 @@ TCG_tests_begin(daily_temperatures_tests,
                 struct Daily_temperatures_output)
 TCG_test_case("empty", {
     .input = {
-        .temperatures = CCC_buffer_with_compound_literal(
+        .temperatures = CCC_buffer_with_storage(
             0,
             (int[0]){}
         ),
-        .days_until_warmer_temperature_result = CCC_buffer_with_compound_literal(
+        .days_until_warmer_temperature_result = CCC_buffer_with_storage(
             0,
             (int[0]){}
         ),
     },
     .output = {
-        .days_until_warmer_temperature = CCC_buffer_with_compound_literal(
+        .days_until_warmer_temperature = CCC_buffer_with_storage(
             0,
             (int[0]){}
         ),
@@ -55,17 +55,17 @@ TCG_test_case("empty", {
 })
 TCG_test_case("single element", {
     .input = {
-        .temperatures = CCC_buffer_with_compound_literal(
+        .temperatures = CCC_buffer_with_storage(
             1,
             (int[1]){42}
         ),
-        .days_until_warmer_temperature_result = CCC_buffer_with_compound_literal(
+        .days_until_warmer_temperature_result = CCC_buffer_with_storage(
             1,
             (int[1]){}
         ),
     },
     .output = {
-        .days_until_warmer_temperature = CCC_buffer_with_compound_literal(
+        .days_until_warmer_temperature = CCC_buffer_with_storage(
             1,
             (int[1]){0}
         ),
@@ -73,17 +73,17 @@ TCG_test_case("single element", {
 })
 TCG_test_case("standard gaps", {
     .input = {
-        .temperatures = CCC_buffer_with_compound_literal(
+        .temperatures = CCC_buffer_with_storage(
             8,
             (int[8]){73, 74, 75, 71, 69, 72, 76, 73}
         ),
-        .days_until_warmer_temperature_result = CCC_buffer_with_compound_literal(
+        .days_until_warmer_temperature_result = CCC_buffer_with_storage(
             8,
             (int[8]){}
         ),
     },
     .output = {
-        .days_until_warmer_temperature = CCC_buffer_with_compound_literal(
+        .days_until_warmer_temperature = CCC_buffer_with_storage(
             8,
             (int[8]){1, 1, 4, 2, 1, 1, 0, 0}
         ),
@@ -91,17 +91,17 @@ TCG_test_case("standard gaps", {
 })
 TCG_test_case("ascending with dips", {
     .input = {
-        .temperatures = CCC_buffer_with_compound_literal(
+        .temperatures = CCC_buffer_with_storage(
             5,
             (int[5]){30, 60, 90, 40, 50}
         ),
-        .days_until_warmer_temperature_result = CCC_buffer_with_compound_literal(
+        .days_until_warmer_temperature_result = CCC_buffer_with_storage(
             5,
             (int[5]){}
         ),
     },
     .output = {
-        .days_until_warmer_temperature = CCC_buffer_with_compound_literal(
+        .days_until_warmer_temperature = CCC_buffer_with_storage(
             5,
             (int[5]){1, 1, 0, 1, 0}
         ),
@@ -109,17 +109,17 @@ TCG_test_case("ascending with dips", {
 })
 TCG_test_case("all equal temperatures", {
     .input = {
-        .temperatures = CCC_buffer_with_compound_literal(
+        .temperatures = CCC_buffer_with_storage(
             5,
             (int[5]){50, 50, 50, 50, 50}
         ),
-        .days_until_warmer_temperature_result = CCC_buffer_with_compound_literal(
+        .days_until_warmer_temperature_result = CCC_buffer_with_storage(
             5,
             (int[5]){}
         ),
     },
     .output = {
-        .days_until_warmer_temperature = CCC_buffer_with_compound_literal(
+        .days_until_warmer_temperature = CCC_buffer_with_storage(
             5,
             (int[5]){0, 0, 0, 0, 0}
         ),
@@ -127,17 +127,17 @@ TCG_test_case("all equal temperatures", {
 })
 TCG_test_case("strictly increasing", {
     .input = {
-        .temperatures = CCC_buffer_with_compound_literal(
+        .temperatures = CCC_buffer_with_storage(
             6,
             (int[6]){10, 20, 30, 40, 50, 60}
         ),
-        .days_until_warmer_temperature_result = CCC_buffer_with_compound_literal(
+        .days_until_warmer_temperature_result = CCC_buffer_with_storage(
             6,
             (int[6]){}
         ),
     },
     .output = {
-        .days_until_warmer_temperature = CCC_buffer_with_compound_literal(
+        .days_until_warmer_temperature = CCC_buffer_with_storage(
             6,
             (int[6]){1, 1, 1, 1, 1, 0}
         ),
@@ -145,17 +145,17 @@ TCG_test_case("strictly increasing", {
 })
 TCG_test_case("strictly decreasing", {
     .input = {
-        .temperatures = CCC_buffer_with_compound_literal(
+        .temperatures = CCC_buffer_with_storage(
             6,
             (int[6]){90, 80, 70, 60, 50, 40}
         ),
-        .days_until_warmer_temperature_result = CCC_buffer_with_compound_literal(
+        .days_until_warmer_temperature_result = CCC_buffer_with_storage(
             6,
             (int[6]){}
         ),
     },
     .output = {
-        .days_until_warmer_temperature = CCC_buffer_with_compound_literal(
+        .days_until_warmer_temperature = CCC_buffer_with_storage(
             6,
             (int[6]){0, 0, 0, 0, 0, 0}
         ),
@@ -163,17 +163,17 @@ TCG_test_case("strictly decreasing", {
 })
 TCG_test_case("alternating high low", {
     .input = {
-        .temperatures = CCC_buffer_with_compound_literal(
+        .temperatures = CCC_buffer_with_storage(
             8,
             (int[8]){50, 40, 50, 40, 50, 40, 50, 40}
         ),
-        .days_until_warmer_temperature_result = CCC_buffer_with_compound_literal(
+        .days_until_warmer_temperature_result = CCC_buffer_with_storage(
             8,
             (int[8]){}
         ),
     },
     .output = {
-        .days_until_warmer_temperature = CCC_buffer_with_compound_literal(
+        .days_until_warmer_temperature = CCC_buffer_with_storage(
             8,
             (int[8]){0, 1, 0, 1, 0, 1, 0, 0}
         ),
@@ -181,17 +181,17 @@ TCG_test_case("alternating high low", {
 })
 TCG_test_case("plateaus with rising edges", {
     .input = {
-        .temperatures = CCC_buffer_with_compound_literal(
+        .temperatures = CCC_buffer_with_storage(
             7,
             (int[7]){30, 30, 30, 40, 40, 50, 50}
         ),
-        .days_until_warmer_temperature_result = CCC_buffer_with_compound_literal(
+        .days_until_warmer_temperature_result = CCC_buffer_with_storage(
             7,
             (int[7]){}
         ),
     },
     .output = {
-        .days_until_warmer_temperature = CCC_buffer_with_compound_literal(
+        .days_until_warmer_temperature = CCC_buffer_with_storage(
             7,
             (int[7]){3, 2, 1, 2, 1, 0, 0}
         ),
@@ -199,17 +199,17 @@ TCG_test_case("plateaus with rising edges", {
 })
 TCG_test_case("large valley then spike", {
     .input = {
-        .temperatures = CCC_buffer_with_compound_literal(
+        .temperatures = CCC_buffer_with_storage(
             7,
             (int[7]){80, 60, 40, 20, 10, 70, 30}
         ),
-        .days_until_warmer_temperature_result = CCC_buffer_with_compound_literal(
+        .days_until_warmer_temperature_result = CCC_buffer_with_storage(
             7,
             (int[7]){}
         ),
     },
     .output = {
-        .days_until_warmer_temperature = CCC_buffer_with_compound_literal(
+        .days_until_warmer_temperature = CCC_buffer_with_storage(
             7,
             (int[7]){0, 4, 3, 2, 1, 0, 0}
         ),
@@ -217,17 +217,17 @@ TCG_test_case("large valley then spike", {
 })
 TCG_test_case("jagged mixed pattern", {
     .input = {
-        .temperatures = CCC_buffer_with_compound_literal(
+        .temperatures = CCC_buffer_with_storage(
             10,
             (int[10]){55, 58, 53, 54, 56, 52, 60, 59, 61, 50}
         ),
-        .days_until_warmer_temperature_result = CCC_buffer_with_compound_literal(
+        .days_until_warmer_temperature_result = CCC_buffer_with_storage(
             10,
             (int[10]){}
         ),
     },
     .output = {
-        .days_until_warmer_temperature = CCC_buffer_with_compound_literal(
+        .days_until_warmer_temperature = CCC_buffer_with_storage(
             10,
             (int[10]){1, 5, 1, 1, 2, 1, 2, 1, 0, 0}
         ),

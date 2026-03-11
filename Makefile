@@ -1,4 +1,4 @@
-.PHONY: default build gcc-release gcc-debug clang-release clang-debug sanitize-debug sanitize-release clean tidy format debug-problems release-problems
+.PHONY: default build gcc-release gcc-debug clang-release clang-debug sanitize-debug sanitize-release clean tidy format problems
 
 MAKE := $(MAKE)
 MAKEFLAGS += --no-print-directory
@@ -41,15 +41,16 @@ format:
 tidy:
 	cmake --build $(BUILD_DIR) $(JOBS) --target tidy $(JOBS)
 
-debug-problems:
+problems:
 	$(MAKE) build
-	$(BUILD_DIR)debug/bin/run_problems $(BUILD_DIR)debug/bin/problems/
-	@echo "RAN PROBLEMS"
-
-release-problems:
-	$(MAKE) build
-	$(BUILD_DIR)bin/run_problems $(BUILD_DIR)bin/problems/
-	@echo "RAN PROBLEMS"
+	@if [ -x "$(BUILD_DIR)debug/bin/run_problems" ]; then                   \
+		$(BUILD_DIR)debug/bin/run_problems $(BUILD_DIR)debug/bin/problems/; \
+	elif [ -x "$(BUILD_DIR)bin/run_problems" ]; then                        \
+		$(BUILD_DIR)bin/run_problems $(BUILD_DIR)bin/problems/;             \
+	else                                                                    \
+		echo "No problem runner found";                                     \
+		exit 1;                                                             \
+	fi
 
 clean:
 	rm -rf build/ install/

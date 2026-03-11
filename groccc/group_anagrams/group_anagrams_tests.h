@@ -23,7 +23,7 @@ TCG_tests_begin(group_anagrams_tests,
                 struct Group_anagrams_output)
 TCG_test_case("3 groups", {
     .input = {
-        .strs = CCC_buffer_with_compound_literal(
+        .strs = CCC_buffer_with_storage(
             6,
             (SV_Str_view[6]){
                 SV_from("eat"),
@@ -36,10 +36,10 @@ TCG_test_case("3 groups", {
         ),
     },
     .output = {
-        .buffer_of_groups = CCC_buffer_with_compound_literal(
+        .buffer_of_groups = CCC_buffer_with_storage(
             3,
             (CCC_Buffer[3]){
-                CCC_buffer_with_compound_literal(
+                CCC_buffer_with_storage(
                     3,
                     (SV_Str_view[3]){
                         SV_from("ate"),
@@ -47,14 +47,14 @@ TCG_test_case("3 groups", {
                         SV_from("tea"),
                     }
                 ),
-                CCC_buffer_with_compound_literal(
+                CCC_buffer_with_storage(
                     2,
                     (SV_Str_view[2]){
                         SV_from("nat"),
                         SV_from("tan"),
                     }
                 ),
-                CCC_buffer_with_compound_literal(
+                CCC_buffer_with_storage(
                     1,
                     (SV_Str_view[1]){
                         SV_from("bat"),
@@ -66,7 +66,7 @@ TCG_test_case("3 groups", {
 })
 TCG_test_case("all identical", {
     .input = {
-        .strs = CCC_buffer_with_compound_literal(
+        .strs = CCC_buffer_with_storage(
             5,
             (SV_Str_view[5]){
                 SV_from("aa"),
@@ -78,10 +78,10 @@ TCG_test_case("all identical", {
         ),
     },
     .output = {
-        .buffer_of_groups = CCC_buffer_with_compound_literal(
+        .buffer_of_groups = CCC_buffer_with_storage(
             1,
             (CCC_Buffer[1]){
-                CCC_buffer_with_compound_literal(
+                CCC_buffer_with_storage(
                     5,
                     (SV_Str_view[5]){
                         SV_from("aa"),
@@ -97,7 +97,7 @@ TCG_test_case("all identical", {
 })
 TCG_test_case("no anagrams", {
     .input = {
-        .strs = CCC_buffer_with_compound_literal(
+        .strs = CCC_buffer_with_storage(
             3,
             (SV_Str_view[3]){
                 SV_from("abc"),
@@ -107,16 +107,16 @@ TCG_test_case("no anagrams", {
         ),
     },
     .output = {
-        .buffer_of_groups = CCC_buffer_with_compound_literal(
+        .buffer_of_groups = CCC_buffer_with_storage(
             3,
             (CCC_Buffer[3]){
-                CCC_buffer_with_compound_literal(
+                CCC_buffer_with_storage(
                     1, (SV_Str_view[1]){ SV_from("abc") }
                 ),
-                CCC_buffer_with_compound_literal(
+                CCC_buffer_with_storage(
                     1, (SV_Str_view[1]){ SV_from("def") }
                 ),
-                CCC_buffer_with_compound_literal(
+                CCC_buffer_with_storage(
                     1, (SV_Str_view[1]){ SV_from("ghi") }
                 ),
             }
@@ -125,13 +125,13 @@ TCG_test_case("no anagrams", {
 })
 TCG_test_case("empty input", {
     .input = {
-        .strs = CCC_buffer_with_compound_literal(
+        .strs = CCC_buffer_with_storage(
             0,
             (SV_Str_view[0]){}
         ),
     },
     .output = {
-        .buffer_of_groups = CCC_buffer_with_compound_literal(
+        .buffer_of_groups = CCC_buffer_with_storage(
             0,
             (CCC_Buffer[0]){}
         ),
@@ -139,7 +139,7 @@ TCG_test_case("empty input", {
 })
 TCG_test_case("single string", {
     .input = {
-        .strs = CCC_buffer_with_compound_literal(
+        .strs = CCC_buffer_with_storage(
             1,
             (SV_Str_view[1]){
                 SV_from("solo"),
@@ -147,10 +147,10 @@ TCG_test_case("single string", {
         ),
     },
     .output = {
-        .buffer_of_groups = CCC_buffer_with_compound_literal(
+        .buffer_of_groups = CCC_buffer_with_storage(
             1,
             (CCC_Buffer[1]){
-                CCC_buffer_with_compound_literal(
+                CCC_buffer_with_storage(
                     1,
                     (SV_Str_view[1]){ SV_from("solo") }
                 ),
@@ -160,7 +160,7 @@ TCG_test_case("single string", {
 })
 TCG_test_case("mixed length anagrams", {
     .input = {
-        .strs = CCC_buffer_with_compound_literal(
+        .strs = CCC_buffer_with_storage(
             7,
             (SV_Str_view[7]){
                 SV_from("abcd"),
@@ -174,10 +174,10 @@ TCG_test_case("mixed length anagrams", {
         ),
     },
     .output = {
-        .buffer_of_groups = CCC_buffer_with_compound_literal(
+        .buffer_of_groups = CCC_buffer_with_storage(
             3,
             (CCC_Buffer[3]){
-                CCC_buffer_with_compound_literal(
+                CCC_buffer_with_storage(
                     3,
                     (SV_Str_view[3]){
                         SV_from("abcd"),
@@ -185,7 +185,7 @@ TCG_test_case("mixed length anagrams", {
                         SV_from("dabc"),
                     }
                 ),
-                CCC_buffer_with_compound_literal(
+                CCC_buffer_with_storage(
                     3,
                     (SV_Str_view[3]){
                         SV_from("abc"),
@@ -193,7 +193,7 @@ TCG_test_case("mixed length anagrams", {
                         SV_from("cab"),
                     }
                 ),
-                CCC_buffer_with_compound_literal(
+                CCC_buffer_with_storage(
                     1,
                     (SV_Str_view[1]){
                         SV_from("zzz"),
