@@ -39,8 +39,8 @@ is_valid_box(int const board[const 9][9], Bitset *const row_check,
 
 static struct Valid_sudoku_output
 valid_sudoku(struct Valid_sudoku_input *input) {
-    Bitset row_check = bitset_with_storage(9UL * 9UL, (Bit[9UL * 9UL]){});
-    Bitset col_check = bitset_with_storage(9UL * 9UL, (Bit[9UL * 9UL]){});
+    Bitset row_check = bitset_with_storage(9 * 9L, (Bit[9 * 9]){});
+    Bitset col_check = bitset_with_storage(9 * 9L, (Bit[9 * 9]){});
     for (size_t row = 0; row < 9; row += 3) {
         for (size_t col = 0; col < 9; col += 3) {
             if (!is_valid_box(input->board, &row_check, &col_check, row, col)) {
