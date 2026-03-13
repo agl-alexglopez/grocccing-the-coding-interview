@@ -40,14 +40,12 @@ cat > "$C_FILE" <<EOF
 
 /* TODO: solve $PROBLEM. Optionally change function signature if desired. */
 static struct ${STRUCT_PREFIX}_output
-${PROBLEM}(struct ${STRUCT_PREFIX}_input *input)
-{
+${PROBLEM}(struct ${STRUCT_PREFIX}_input *input) {
     return (struct ${STRUCT_PREFIX}_output){};
 }
 
 int
-main(void)
-{
+main(void) {
     int passed = 0;
     TCG_for_each_test_case(${PROBLEM}_tests, {
         /* TODO: Verify your output against the correct result. */
@@ -69,13 +67,11 @@ cat > "$H_FILE" <<EOF
 
 #include "utility/test_case_generator.h"
 
-struct ${STRUCT_PREFIX}_input
-{
+struct ${STRUCT_PREFIX}_input {
     /* TODO: define input fields */
 };
 
-struct ${STRUCT_PREFIX}_output
-{
+struct ${STRUCT_PREFIX}_output {
     /* TODO: define expected output fields */
 };
 
