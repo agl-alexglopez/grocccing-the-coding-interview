@@ -6,15 +6,15 @@
 #include "str_view/str_view.h"
 
 CCC_Order
-hash_map_int_key_val_order(CCC_Key_comparator_context const order) {
-    struct Int_key_val const *const right = order.type_right;
-    int const left = *((int *)order.key_left);
+hash_map_int_key_val_order(CCC_Key_comparator_arguments const arguments) {
+    struct Int_key_val const *const right = arguments.type_right;
+    int const left = *((int *)arguments.key_left);
     return (left > right->key) - (left < right->key);
 }
 
 uint64_t
-hash_map_int_to_u64(CCC_Key_context const k) {
-    int const id_int = *((int *)k.key);
+hash_map_int_to_u64(CCC_Key_arguments const arguments) {
+    int const id_int = *((int *)arguments.key);
     uint64_t x = id_int;
     x = (x ^ (x >> 30)) * UINT64_C(0xbf58476d1ce4e5b9);
     x = (x ^ (x >> 27)) * UINT64_C(0x94d049bb133111eb);
@@ -23,8 +23,8 @@ hash_map_int_to_u64(CCC_Key_context const k) {
 }
 
 uint64_t
-hash_fnv_1a_str_view_to_u64(CCC_Key_context const str) {
-    SV_Str_view const sv = *(SV_Str_view *)str.key;
+hash_fnv_1a_str_view_to_u64(CCC_Key_arguments const string_arguments) {
+    SV_Str_view const sv = *(SV_Str_view *)string_arguments.key;
     /* 64 bit Offset basis. Changes based on return bit width. */
     uint64_t hash = 14695981039346656037ULL;
     for (char const *c = SV_begin(sv); c != SV_end(sv); c = SV_next(c)) {

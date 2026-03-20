@@ -125,16 +125,10 @@ TCG_test_case("no anagrams", {
 })
 TCG_test_case("empty input", {
     .input = {
-        .strs = CCC_buffer_with_storage(
-            0,
-            (SV_Str_view[0]){}
-        ),
+        .strs = CCC_buffer_default(SV_Str_view),
     },
     .output = {
-        .buffer_of_groups = CCC_buffer_with_storage(
-            0,
-            (CCC_Buffer[0]){}
-        ),
+        .buffer_of_groups = CCC_buffer_default(CCC_Buffer),
     },
 })
 TCG_test_case("single string", {

@@ -51,7 +51,7 @@ are_equal(Buffer const *const a, Buffer const *const b) {
 }
 
 static CCC_Order
-compare_heap_elements(CCC_Type_comparator_context const context) {
+compare_heap_elements(CCC_Comparator_arguments const context) {
     Flat_hash_map const *const frequency = context.context;
     int const *const lhs = context.type_left;
     int const *const rhs = context.type_right;
@@ -69,39 +69,54 @@ compare_heap_elements(CCC_Type_comparator_context const context) {
 and tests more of the Collection data structures. Bucket sort technically meets
 the runtime specification but so what. */
 static struct Top_k_frequent_elements_output
-top_k_frequent_elements(struct Top_k_frequent_elements_input const *const input,
-                        Buffer *const top_k, Flat_hash_map *const frequency) {
+top_k_frequent_elements(
+    struct Top_k_frequent_elements_input const *const input,
+    Buffer *const top_k,
+    Flat_hash_map *const frequency,
+    CCC_Allocator const *const allocator
+) {
     for (int const *i = begin(&input->nums); i != end(&input->nums);
          i = next(&input->nums, i)) {
         flat_hash_map_or_insert_with(
-            flat_hash_map_and_modify_with(entry_wrap(frequency, i),
-                                          struct Int_key_val, { ++T->val; }),
+            flat_hash_map_and_modify_with(
+                flat_hash_map_entry_wrap(frequency, i, allocator),
+                struct Int_key_val,
+                { ++T->val; }
+            ),
             (struct Int_key_val){
                 .key = *i,
                 .val = 1,
-            });
+            }
+        );
     }
     if (count(frequency).count < (size_t)input->k) {
         return (struct Top_k_frequent_elements_output){};
     }
     Buffer heap_storage
-        = buffer_with_capacity(int, stdlib_allocate, count(frequency).count);
+        = buffer_with_capacity(int, *allocator, count(frequency).count);
     defer {
-        clear_and_free(&heap_storage, NULL);
+        clear_and_free(&heap_storage, &(CCC_Destructor){}, allocator);
     }
     for (struct Int_key_val const *i = begin(frequency); i != end(frequency);
          i = next(frequency, i)) {
-        (void)push_back(&heap_storage, i);
+        (void)push_back(&heap_storage, i, allocator);
     }
     /* The priority queue does not need allocation permissions. It just wraps
        the provided buffer and orders it. */
-    Flat_priority_queue max_heap = flat_priority_queue_heapify(
-        int, CCC_ORDER_GREATER, compare_heap_elements, NULL, frequency,
-        capacity(&heap_storage).count, count(&heap_storage).count,
-        begin(&heap_storage));
+    Flat_priority_queue max_heap = CCC_flat_priority_queue_heapify(
+        int,
+        CCC_ORDER_GREATER,
+        ((CCC_Comparator){
+            .compare = compare_heap_elements,
+            .context = frequency,
+        }),
+        capacity(&heap_storage).count,
+        count(&heap_storage).count,
+        begin(&heap_storage)
+    );
     int to_push = input->k;
     while (to_push && !is_empty(&max_heap)) {
-        (void)push_back(top_k, front(&max_heap));
+        (void)push_back(top_k, front(&max_heap), allocator);
         pop(&max_heap, &(int){0});
         --to_push;
     }
@@ -111,19 +126,31 @@ top_k_frequent_elements(struct Top_k_frequent_elements_input const *const input,
 int
 main(void) {
     TCG_Count passed = 0;
-    Flat_hash_map frequency_scratch_map = flat_hash_map_with_capacity(
-        struct Int_key_val, key, hash_map_int_to_u64,
-        hash_map_int_key_val_order, stdlib_allocate, 0);
-    Buffer top_k_scratch_buffer = buffer_with_capacity(int, stdlib_allocate, 0);
+    Flat_hash_map frequency_scratch_map = CCC_flat_hash_map_default(
+        struct Int_key_val,
+        key,
+        (CCC_Hasher){
+            .hash = hash_map_int_to_u64,
+            .compare = hash_map_int_key_val_order,
+        }
+    );
+    Buffer top_k_scratch_buffer = buffer_default(int);
     defer {
-        clear_and_free(&top_k_scratch_buffer, NULL);
-        clear_and_free(&frequency_scratch_map, NULL);
+        clear_and_free(
+            &top_k_scratch_buffer, &(CCC_Destructor){}, &std_allocator
+        );
+        clear_and_free(
+            &frequency_scratch_map, &(CCC_Destructor){}, &std_allocator
+        );
     }
     TCG_for_each_test_case(top_k_frequent_elements_tests, {
         struct Top_k_frequent_elements_output const output
             = top_k_frequent_elements(
                 &TCG_test_case_input(top_k_frequent_elements_tests),
-                &top_k_scratch_buffer, &frequency_scratch_map);
+                &top_k_scratch_buffer,
+                &frequency_scratch_map,
+                &std_allocator
+            );
         struct Top_k_frequent_elements_output const *const correct_output
             = &TCG_test_case_output(top_k_frequent_elements_tests);
         if (!are_equal(&output.top_k, &correct_output->top_k)) {
@@ -131,8 +158,8 @@ main(void) {
         } else {
             ++passed;
         }
-        clear(&top_k_scratch_buffer, NULL);
-        clear(&frequency_scratch_map, NULL);
+        clear(&top_k_scratch_buffer, &(CCC_Destructor){});
+        clear(&frequency_scratch_map, &(CCC_Destructor){});
     });
     return TCG_tests_status(top_k_frequent_elements_tests, passed);
 }

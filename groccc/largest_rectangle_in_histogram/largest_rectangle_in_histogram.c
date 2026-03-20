@@ -15,13 +15,16 @@
 static struct Largest_rectangle_in_histogram_output
 largest_rectangle_in_histogram(
     struct Largest_rectangle_in_histogram_input const *const input,
-    Buffer *const index_stack) {
+    Buffer *const index_stack,
+    CCC_Allocator const *const allocator
+) {
     struct Largest_rectangle_in_histogram_output res = {};
     int const end = (int)count(&input->heights).count;
     for (int i = 0; i <= end; ++i) {
         while (!buffer_is_empty(index_stack)) {
             int const min_height = *buffer_as(
-                &input->heights, int, *buffer_back_as(index_stack, int));
+                &input->heights, int, *buffer_back_as(index_stack, int)
+            );
             if (i != end && min_height < *buffer_as(&input->heights, int, i)) {
                 break;
             }
@@ -34,7 +37,7 @@ largest_rectangle_in_histogram(
                 res.largest_area = area;
             }
         }
-        (void)push_back(index_stack, &i);
+        (void)push_back(index_stack, &i, allocator);
     }
     return res;
 }
@@ -42,16 +45,19 @@ largest_rectangle_in_histogram(
 int
 main(void) {
     TCG_Count passed = 0;
-    Buffer index_stack_scratch_buffer
-        = buffer_with_allocator(int, stdlib_allocate);
+    Buffer index_stack_scratch_buffer = buffer_default(int);
     defer {
-        (void)clear_and_free(&index_stack_scratch_buffer, NULL);
+        (void)clear_and_free(
+            &index_stack_scratch_buffer, &(CCC_Destructor){}, &std_allocator
+        );
     }
     TCG_for_each_test_case(largest_rectangle_in_histogram_tests, {
         struct Largest_rectangle_in_histogram_output const output
             = largest_rectangle_in_histogram(
                 &TCG_test_case_input(largest_rectangle_in_histogram_tests),
-                &index_stack_scratch_buffer);
+                &index_stack_scratch_buffer,
+                &std_allocator
+            );
         struct Largest_rectangle_in_histogram_output const *const correct_output
             = &TCG_test_case_output(largest_rectangle_in_histogram_tests);
         if (output.largest_area != correct_output->largest_area) {
@@ -59,7 +65,7 @@ main(void) {
         } else {
             ++passed;
         }
-        clear(&index_stack_scratch_buffer, NULL);
+        clear(&index_stack_scratch_buffer, &(CCC_Destructor){});
     });
     return TCG_tests_status(largest_rectangle_in_histogram_tests, passed);
 }

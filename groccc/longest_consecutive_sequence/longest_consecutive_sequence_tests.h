@@ -19,10 +19,7 @@ TCG_tests_begin(longest_consecutive_sequence_tests,
                 struct Longest_consecutive_sequence_output)
 TCG_test_case("empty input", {
     .input = {
-        .nums = CCC_buffer_with_storage(
-            0,
-            (int[0]){}
-        ),
+        .nums = CCC_buffer_default(int),
     },
     .output = {
         .longest = 0,

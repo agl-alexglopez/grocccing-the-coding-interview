@@ -13,13 +13,17 @@
 #include "utility/test_case_generator.h"
 
 static struct Longest_consecutive_sequence_output
-longest_consecutive_sequence(struct Longest_consecutive_sequence_input *input,
-                             Flat_hash_map *const map) {
+longest_consecutive_sequence(
+    struct Longest_consecutive_sequence_input *input,
+    Flat_hash_map *const map,
+    CCC_Allocator const *const allocator
+) {
     struct Longest_consecutive_sequence_output result = {};
     for (int const *i = begin(&input->nums); i != end(&input->nums);
          i = next(&input->nums, i)) {
-        CCC_Entry entry
-            = try_insert(map, &(struct Int_key_val){.key = *i, .val = 1});
+        CCC_Entry entry = try_insert(
+            map, &(struct Int_key_val){.key = *i, .val = 1}, allocator
+        );
         if (occupied(&entry)) {
             continue;
         }
@@ -33,16 +37,24 @@ longest_consecutive_sequence(struct Longest_consecutive_sequence_input *input,
         int const full_run = left_run_length + connect->val + right_run_length;
         connect->val = full_run;
         if (left_run) {
-            (void)insert_or_assign(map, &(struct Int_key_val){
-                                            .key = *i - left_run_length,
-                                            .val = full_run,
-                                        });
+            (void)insert_or_assign(
+                map,
+                &(struct Int_key_val){
+                    .key = *i - left_run_length,
+                    .val = full_run,
+                },
+                allocator
+            );
         }
         if (right_run) {
-            (void)insert_or_assign(map, &(struct Int_key_val){
-                                            .key = *i + right_run_length,
-                                            .val = full_run,
-                                        });
+            (void)insert_or_assign(
+                map,
+                &(struct Int_key_val){
+                    .key = *i + right_run_length,
+                    .val = full_run,
+                },
+                allocator
+            );
         }
         if (full_run > result.longest) {
             result.longest = full_run;
@@ -57,16 +69,24 @@ main(void) {
     /* Not sure how large the test cases are so we will have a scratch map
        we clear on every iteration, leaving its underlying buffer in place
        as it grows to support the maximum array size seen so far. */
-    Flat_hash_map map = CCC_flat_hash_map_with_allocator(
-        struct Int_key_val, key, hash_map_int_to_u64,
-        hash_map_int_key_val_order, stdlib_allocate);
+    Flat_hash_map map = CCC_flat_hash_map_default(
+        struct Int_key_val,
+        key,
+        (CCC_Hasher){
+            .hash = hash_map_int_to_u64,
+            .compare = hash_map_int_key_val_order,
+        }
+    );
     defer {
-        clear_and_free(&map, NULL);
+        clear_and_free(&map, &(CCC_Destructor){}, &std_allocator);
     }
     TCG_for_each_test_case(longest_consecutive_sequence_tests, {
         struct Longest_consecutive_sequence_output const output
             = longest_consecutive_sequence(
-                &TCG_test_case_input(longest_consecutive_sequence_tests), &map);
+                &TCG_test_case_input(longest_consecutive_sequence_tests),
+                &map,
+                &std_allocator
+            );
         struct Longest_consecutive_sequence_output const *const correct_output
             = &TCG_test_case_output(longest_consecutive_sequence_tests);
         if (output.longest != correct_output->longest) {
@@ -74,7 +94,7 @@ main(void) {
         } else {
             ++passed;
         }
-        clear(&map, NULL);
+        clear(&map, &(CCC_Destructor){});
     });
     return TCG_tests_status(longest_consecutive_sequence_tests, passed);
 }

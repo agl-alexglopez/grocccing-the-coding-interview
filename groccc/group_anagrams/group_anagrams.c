@@ -27,7 +27,7 @@ struct String_int {
 };
 
 static CCC_Order
-str_view_int_are_equal(CCC_Key_comparator_context const compare) {
+str_view_int_compare(CCC_Key_comparator_arguments const compare) {
     struct String_offset const *const key = compare.key_left;
     struct String_int const *const type = compare.type_right;
     return (CCC_Order)SV_compare(
@@ -38,13 +38,14 @@ str_view_int_are_equal(CCC_Key_comparator_context const compare) {
         (SV_Str_view){
             .str = string_arena_at(compare.context, &type->key),
             .len = type->key.len,
-        });
+        }
+    );
 }
 
 static uint64_t
-hash_string_offset(CCC_Key_context const context) {
+hash_string_offset(CCC_Key_arguments const context) {
     struct String_offset const *const str = context.key;
-    return hash_fnv_1a_str_view_to_u64((CCC_Key_context){
+    return hash_fnv_1a_str_view_to_u64((CCC_Key_arguments){
         .key = &(SV_Str_view){
             .str = string_arena_at(context.context, str),
             .len = str->len,
@@ -53,8 +54,10 @@ hash_string_offset(CCC_Key_context const context) {
 }
 
 static void
-destroy_nested_buffers(CCC_Type_context const str_view_buffer) {
-    buffer_clear_and_free(str_view_buffer.type, NULL);
+destroy_nested_buffers(CCC_Arguments const str_view_buffer) {
+    buffer_clear_and_free(
+        str_view_buffer.type, &(CCC_Destructor){}, &std_allocator
+    );
 }
 
 static inline bool
@@ -69,8 +72,10 @@ contains_str(Buffer const *const strs, SV_Str_view const *const str) {
 }
 
 static inline bool
-is_correct(struct Group_anagrams_output const *const a,
-           struct Group_anagrams_output const *const b) {
+is_correct(
+    struct Group_anagrams_output const *const a,
+    struct Group_anagrams_output const *const b
+) {
     if (count(&a->buffer_of_groups).count
         != count(&b->buffer_of_groups).count) {
         return false;
@@ -93,9 +98,13 @@ is_correct(struct Group_anagrams_output const *const a,
 }
 
 static struct Group_anagrams_output
-group_anagrams(struct Group_anagrams_input const *input,
-               struct String_arena *const str_arena, Buffer *const groups,
-               Flat_hash_map *const anagram_map) {
+group_anagrams(
+    struct Group_anagrams_input const *input,
+    struct String_arena *const str_arena,
+    Buffer *const groups,
+    Flat_hash_map *const anagram_map,
+    CCC_Allocator const *const allocator
+) {
     int index = 0;
     for (SV_Str_view const *str = begin(&input->strs); str != end(&input->strs);
          str = next(&input->strs, str)) {
@@ -124,21 +133,27 @@ group_anagrams(struct Group_anagrams_input const *input,
              freq = next(&chars, freq)) {
             int const characters_needed_for_frequency = snprintf(
                 string_arena_at(str_arena, &key_value.key) + string_position,
-                digits_character_count, "%d", *freq);
+                digits_character_count,
+                "%d",
+                *freq
+            );
             digits_character_count -= characters_needed_for_frequency;
             string_position += characters_needed_for_frequency;
         }
-        CCC_Entry anagram = try_insert(anagram_map, &key_value);
+        CCC_Entry anagram = try_insert(anagram_map, &key_value, allocator);
         if (occupied(&anagram)) {
             /* Save a little space and the string arena will only store unique
                anagram character arrays. */
             string_arena_pop_str(str_arena, &key_value.key);
             struct String_int const *const inserted = unwrap(&anagram);
             Buffer *const group = buffer_at(groups, inserted->val);
-            (void)buffer_push_back(group, str);
+            (void)buffer_push_back(group, str, allocator);
         } else {
             buffer_emplace_back(
-                groups, buffer_from(stdlib_allocate, 0, (SV_Str_view[]){*str}));
+                groups,
+                allocator,
+                buffer_from(*allocator, 0, (SV_Str_view[]){*str})
+            );
             ++index;
         }
     }
@@ -152,19 +167,33 @@ main(void) {
        tests so we are not constantly allocating in a tight testing loop. Just
        remember to clear (not free) their storage between tests. */
     struct String_arena str_arena = string_arena_create(4096);
-    Buffer groups = buffer_with_allocator(Buffer, stdlib_allocate);
-    Flat_hash_map anagram_map = CCC_flat_hash_map_context_with_allocator(
-        struct String_int, key, hash_string_offset, str_view_int_are_equal,
-        stdlib_allocate, &str_arena);
+    Buffer groups = buffer_default(Buffer);
+    Flat_hash_map anagram_map = CCC_flat_hash_map_default(
+        struct String_int,
+        key,
+        (CCC_Hasher){
+            .hash = hash_string_offset,
+            .compare = str_view_int_compare,
+            .context = &str_arena,
+        }
+    );
     defer {
         string_arena_free(&str_arena);
-        clear_and_free(&anagram_map, NULL);
-        clear_and_free(&groups, destroy_nested_buffers);
+        clear_and_free(&anagram_map, &(CCC_Destructor){}, &std_allocator);
+        clear_and_free(
+            &groups,
+            &(CCC_Destructor){.destroy = destroy_nested_buffers},
+            &std_allocator
+        );
     }
     TCG_for_each_test_case(group_anagrams_tests, {
-        struct Group_anagrams_output const output
-            = group_anagrams(&TCG_test_case_input(group_anagrams_tests),
-                             &str_arena, &groups, &anagram_map);
+        struct Group_anagrams_output const output = group_anagrams(
+            &TCG_test_case_input(group_anagrams_tests),
+            &str_arena,
+            &groups,
+            &anagram_map,
+            &std_allocator
+        );
         struct Group_anagrams_output const *const correct_output
             = &TCG_test_case_output(group_anagrams_tests);
         if (!is_correct(&output, correct_output)) {
@@ -172,8 +201,8 @@ main(void) {
         } else {
             ++passed;
         }
-        clear(&groups, destroy_nested_buffers);
-        clear(&anagram_map, NULL);
+        clear(&groups, &(CCC_Destructor){.destroy = destroy_nested_buffers});
+        clear(&anagram_map, &(CCC_Destructor){});
         string_arena_clear(&str_arena);
     });
     return TCG_tests_status(group_anagrams_tests, passed);

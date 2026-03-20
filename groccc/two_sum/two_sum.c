@@ -27,15 +27,21 @@ You can return the answer in any order. */
 #include "utility/test_case_generator.h"
 
 static struct Two_sum_output
-two_sum(struct Two_sum_input const *const test_case, Flat_hash_map *const map) {
+two_sum(
+    struct Two_sum_input const *const test_case,
+    Flat_hash_map *const map,
+    CCC_Allocator const *const allocator
+) {
     assert(is_empty(map));
     for (int const *i = begin(&test_case->nums); i != end(&test_case->nums);
          i = next(&test_case->nums, i)) {
         size_t const index = buffer_index(&test_case->nums, i).count;
-        struct Int_key_val const *const other_addend
-            = get_key_value(map, &(int){
-                                     test_case->target - *i,
-                                 });
+        struct Int_key_val const *const other_addend = get_key_value(
+            map,
+            &(int){
+                test_case->target - *i,
+            }
+        );
         if (other_addend) {
             return (struct Two_sum_output){{
                 index,
@@ -43,10 +49,13 @@ two_sum(struct Two_sum_input const *const test_case, Flat_hash_map *const map) {
             }};
         }
         (void)insert_or_assign(
-            map, &(struct Int_key_val){
-                     .key = *i,
-                     .val = buffer_index(&test_case->nums, i).count,
-                 });
+            map,
+            &(struct Int_key_val){
+                .key = *i,
+                .val = buffer_index(&test_case->nums, i).count,
+            },
+            allocator
+        );
     }
     return (struct Two_sum_output){};
 }
@@ -56,15 +65,21 @@ main(void) {
     TCG_Count passed = 0;
     /* We don't assume any map capacity but will have a working underlying
        buffer that we simply clear between test cases. */
-    Flat_hash_map map = flat_hash_map_with_allocator(
-        struct Int_key_val, key, hash_map_int_to_u64,
-        hash_map_int_key_val_order, stdlib_allocate);
+    Flat_hash_map map = flat_hash_map_default(
+        struct Int_key_val,
+        key,
+        (CCC_Hasher){
+            .hash = hash_map_int_to_u64,
+            .compare = hash_map_int_key_val_order,
+        }
+    );
     defer {
-        clear_and_free(&map, NULL);
+        clear_and_free(&map, &(CCC_Destructor){}, &std_allocator);
     }
     TCG_for_each_test_case(two_sum_tests, {
-        struct Two_sum_output const solution_output
-            = two_sum(&TCG_test_case_input(two_sum_tests), &map);
+        struct Two_sum_output const solution_output = two_sum(
+            &TCG_test_case_input(two_sum_tests), &map, &std_allocator
+        );
         struct Two_sum_output const *const correct_output
             = &TCG_test_case_output(two_sum_tests);
         if ((solution_output.addends[0] != correct_output->addends[0]
@@ -75,7 +90,7 @@ main(void) {
         } else {
             ++passed;
         }
-        clear(&map, NULL);
+        clear(&map, &(CCC_Destructor){});
     });
     return TCG_tests_status(two_sum_tests, passed);
 }

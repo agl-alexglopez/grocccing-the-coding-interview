@@ -6,16 +6,18 @@
 #include "ccc/types.h"
 
 void *
-stdlib_allocate(CCC_Allocator_context const context) {
-    if (!context.input && !context.bytes) {
+stdlib_allocate(CCC_Allocator_arguments const arguments) {
+    if (!arguments.input && !arguments.bytes) {
         return NULL;
     }
-    if (!context.input) {
-        return malloc(context.bytes);
+    if (!arguments.input) {
+        return malloc(arguments.bytes);
     }
-    if (!context.bytes) {
-        free(context.input);
+    if (!arguments.bytes) {
+        free(arguments.input);
         return NULL;
     }
-    return realloc(context.input, context.bytes);
+    return realloc(arguments.input, arguments.bytes);
 }
+
+CCC_Allocator const std_allocator = {.allocate = stdlib_allocate};

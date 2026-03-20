@@ -37,20 +37,11 @@ TCG_tests_begin(daily_temperatures_tests,
                 struct Daily_temperatures_output)
 TCG_test_case("empty", {
     .input = {
-        .temperatures = CCC_buffer_with_storage(
-            0,
-            (int[0]){}
-        ),
-        .days_until_warmer_temperature_result = CCC_buffer_with_storage(
-            0,
-            (int[0]){}
-        ),
+        .temperatures = CCC_buffer_default(int),
+        .days_until_warmer_temperature_result = CCC_buffer_default(int),
     },
     .output = {
-        .days_until_warmer_temperature = CCC_buffer_with_storage(
-            0,
-            (int[0]){}
-        ),
+        .days_until_warmer_temperature = CCC_buffer_default(int),
     },
 })
 TCG_test_case("single element", {

@@ -6,18 +6,20 @@ SpacesInParentheses: false
 IndentPPDirectives: AfterHash
 IndentCaseLabels: true
 BreakAfterReturnType: AllDefinitions
-BreakBeforeBinaryOperators: All
 AllowShortBlocksOnASingleLine: Empty
 AllowShortFunctionsOnASingleLine: None
-AllowShortIfStatementsOnASingleLine: Never
-AllowShortLoopsOnASingleLine: false
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortEnumsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+BreakBeforeBinaryOperators: All
 AlignOperands: AlignAfterOperator
 AlignAfterOpenBracket: true
+BreakAfterOpenBracketFunction: true
+BreakBeforeCloseBracketFunction: true
 AlignTrailingComments: Always
-BinPackArguments: true
-BinPackParameters: true
+BinPackArguments: false
+BinPackParameters: false 
 QualifierAlignment: Custom
 QualifierOrder: [static, inline, type, volatile, const]
 ---

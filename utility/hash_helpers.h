@@ -14,8 +14,8 @@ struct Int_key_val {
 
 /*================================  CCC Callbacks   =========================*/
 
-CCC_Order hash_map_int_key_val_order(CCC_Key_comparator_context order);
-uint64_t hash_map_int_to_u64(CCC_Key_context k);
+CCC_Order hash_map_int_key_val_order(CCC_Key_comparator_arguments arguments);
+uint64_t hash_map_int_to_u64(CCC_Key_arguments arguments);
 
 /** @brief A utility hasher for arbitrary hashing and safe aliasing.
 @param[in] str key context for which the key field is a pointer to SV_Str_view.
@@ -31,6 +31,6 @@ any type may be safely aliased by `char *` and `char const *`. This hash
 function also only iterates over the range provided so it is safe to provide
 non-null terminated data to this function (even though the SV_Str_view library
 says this is not recommended). */
-uint64_t hash_fnv_1a_str_view_to_u64(CCC_Key_context str);
+uint64_t hash_fnv_1a_str_view_to_u64(CCC_Key_arguments string_arguments);
 
 #endif /* HASH_HELPERS_H */

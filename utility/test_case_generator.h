@@ -65,61 +65,71 @@ Then the calling code utilizes the types the user defined for test cases and the
 generator machinery code as follows.
 
 ```
-struct Int_key_val
-{
-    int key;
-    int val;
-};
-
-struct Two_sum_output
-two_sum(struct Two_sum_input const *const test_case)
-{
-    Flat_hash_map map = flat_hash_map_initialize(
-        &(Small_fixed_map){}, struct Int_key_val, key, flat_hash_map_int_to_u64,
-        flat_hash_map_id_order, NULL, NULL,
-        flat_hash_map_fixed_capacity(Small_fixed_map));
-    struct Two_sum_output solution = {{-1, -1}};
-    for (size_t i = 0; i < test_case->nums_count; ++i)
-    {
+static struct Two_sum_output
+two_sum(
+    struct Two_sum_input const *const test_case,
+    Flat_hash_map *const map,
+    CCC_Allocator const *const allocator
+) {
+    assert(is_empty(map));
+    for (int const *i = begin(&test_case->nums); i != end(&test_case->nums);
+         i = next(&test_case->nums, i)) {
+        size_t const index = buffer_index(&test_case->nums, i).count;
         struct Int_key_val const *const other_addend = get_key_value(
-            &map, &(int){test_case->target - test_case->nums[i]});
-        if (other_addend)
-        {
-            solution.addends[0] = (int)i;
-            solution.addends[1] = other_addend->val;
+            map,
+            &(int){
+                test_case->target - *i,
+            }
+        );
+        if (other_addend) {
+            return (struct Two_sum_output){{
+                index,
+                other_addend->val,
+            }};
         }
-        (void)insert_or_assign(&map, &(struct Int_key_val){
-                                         .key = test_case->nums[i],
-                                         .val = (int)i,
-                                     });
+        (void)insert_or_assign(
+            map,
+            &(struct Int_key_val){
+                .key = *i,
+                .val = buffer_index(&test_case->nums, i).count,
+            },
+            allocator
+        );
     }
-    return solution;
+    return (struct Two_sum_output){};
 }
 
 int
-main(void)
-{
+main(void) {
     TCG_Count passed = 0;
+    Flat_hash_map map = flat_hash_map_default(
+        struct Int_key_val,
+        key,
+        (CCC_Hasher){
+            .hash = hash_map_int_to_u64,
+            .compare = hash_map_int_key_val_order,
+        }
+    );
+    defer {
+        clear_and_free(&map, &(CCC_Destructor){}, &std_allocator);
+    }
     TCG_for_each_test_case(two_sum_tests, {
-        struct Two_sum_output const solution_output
-            = two_sum(&TCG_test_case_input(two_sum_tests));
+        struct Two_sum_output const solution_output = two_sum(
+            &TCG_test_case_input(two_sum_tests), &map, &std_allocator
+        );
         struct Two_sum_output const *const correct_output
             = &TCG_test_case_output(two_sum_tests);
-        if (!solution_matches_output(&solution_output, correct_output))
-        {
-            (void)fprintf(stderr, "fail for test: %s, file: %s, line: %d\n",
-                          TCG_test_case_name(two_sum_tests),
-                          TCG_test_case_file(two_sum_tests),
-                          TCG_test_case_line(two_sum_tests));
-        }
-        else
-        {
+        if ((solution_output.addends[0] != correct_output->addends[0]
+             && solution_output.addends[0] != correct_output->addends[1])
+            || (solution_output.addends[1] != correct_output->addends[0]
+                && solution_output.addends[1] != correct_output->addends[1])) {
+            logfail(two_sum_tests);
+        } else {
             ++passed;
         }
+        clear(&map, &(CCC_Destructor){});
     });
-    (void)fprintf(stdout, "two_sum passed %d/%lu\n", passed,
-                  TCG_tests_count(two_sum_tests));
-    return 0;
+    return TCG_tests_status(two_sum_tests, passed);
 }
 ```
 
@@ -298,11 +308,13 @@ This function lets the user problem executable determine what comparison and
 test failure looks like. It does not bring in any print or assert dependencies.
 Comparing scalars, arrays, and allocations can be tricky so the user can write
 the most type correct code in the provided code block. */
-#define TCG_for_each_test_case(test_cases_name,                                \
-                               solution_code_comparison_code_cleanup_code...)  \
+#define TCG_for_each_test_case(                                                \
+    test_cases_name, solution_code_comparison_code_cleanup_code...             \
+)                                                                              \
     (__extension__({                                                           \
         for (TCG_Count tcg_index = 0;                                          \
-             tcg_index < TCG_tests_count(test_cases_name); ++tcg_index) {      \
+             tcg_index < TCG_tests_count(test_cases_name);                     \
+             ++tcg_index) {                                                    \
             solution_code_comparison_code_cleanup_code                         \
         }                                                                      \
     }))
