@@ -7,16 +7,16 @@
 #define TRAITS_USING_NAMESPACE_CCC
 #define FLAT_PRIORITY_QUEUE_USING_NAMESPACE_CCC
 #include "ccc/buffer.h"
-#include "ccc/flat_priority_queue.h"
+#include "ccc/sort.h"
 #include "ccc/traits.h"
 #include "ccc/types.h"
 
 #include "sort_an_array_tests.h"
 
 static CCC_Order
-compare_ints(CCC_Type_comparator_context const context) {
-    int const *const lhs = context.type_left;
-    int const *const rhs = context.type_right;
+compare_ints(CCC_Comparator_arguments const arguments) {
+    int const *const lhs = arguments.type_left;
+    int const *const rhs = arguments.type_right;
     return (*lhs > *rhs) - (*lhs < *rhs);
 }
 
@@ -34,20 +34,21 @@ buffers_match(Buffer const *const a, Buffer const *const b) {
     return true;
 }
 
-/* TODO: solve sort_an_array. Optionally change function signature if desired.
- */
 static struct Sort_an_array_output
-sort_an_array(struct Sort_an_array_input *input) {
+sort_an_array(struct Sort_an_array_input *const input) {
     if (is_empty(&input->ints)) {
         return (struct Sort_an_array_output){};
     }
-    Flat_priority_queue pq = flat_priority_queue_heapify(
-        int, CCC_ORDER_GREATER, compare_ints, NULL, NULL,
-        capacity(&input->ints).count, count(&input->ints).count,
-        begin(&input->ints));
-    return (struct Sort_an_array_output){
-        flat_priority_queue_heapsort(&pq, &(int){}),
-    };
+    CCC_Result const result = CCC_sort_heapsort(
+        &input->ints,
+        &(int){},
+        CCC_ORDER_LESSER,
+        &(CCC_Comparator){.compare = compare_ints}
+    );
+    if (result != CCC_RESULT_OK) {
+        return (struct Sort_an_array_output){};
+    }
+    return (struct Sort_an_array_output){input->ints};
 }
 
 int

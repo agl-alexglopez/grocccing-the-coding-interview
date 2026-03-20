@@ -19,10 +19,10 @@ TCG_tests_begin(sort_an_array_tests,
 
 TCG_test_case("empty", {
     .input = {
-        .ints = {},
+        .ints = CCC_buffer_default(int),
     },
     .output = {
-        .sorted_ints = {},
+        .sorted_ints = CCC_buffer_default(int),
     },
 })
 
