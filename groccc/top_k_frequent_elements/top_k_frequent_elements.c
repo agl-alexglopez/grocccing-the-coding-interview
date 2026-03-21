@@ -6,10 +6,9 @@
 #define BUFFER_USING_NAMESPACE_CCC
 #define TRAITS_USING_NAMESPACE_CCC
 #define FLAT_HASH_MAP_USING_NAMESPACE_CCC
-#define FLAT_PRIORITY_QUEUE_USING_NAMESPACE_CCC
+#define PRIORITY_QUEUE_USING_NAMESPACE_CCC
 #include "ccc/buffer.h"
 #include "ccc/flat_hash_map.h"
-#include "ccc/flat_priority_queue.h"
 #include "ccc/traits.h"
 #include "ccc/types.h"
 
@@ -20,6 +19,11 @@
 #include "utility/test_case_generator.h"
 
 #include "top_k_frequent_elements_tests.h"
+
+struct Priority_int {
+    Priority_queue_node node;
+    struct Int_key_val kv;
+};
 
 static inline bool
 has_num(Buffer const *const b, int const i) {
@@ -52,17 +56,17 @@ are_equal(Buffer const *const a, Buffer const *const b) {
 
 static CCC_Order
 compare_heap_elements(CCC_Comparator_arguments const context) {
-    Flat_hash_map const *const frequency = context.context;
-    int const *const lhs = context.type_left;
-    int const *const rhs = context.type_right;
-    struct Int_key_val const *const lhs_frequency
-        = get_key_value(frequency, lhs);
-    struct Int_key_val const *const rhs_frequency
-        = get_key_value(frequency, rhs);
-    assert(lhs_frequency);
-    assert(rhs_frequency);
-    return (lhs_frequency->val > rhs_frequency->val)
-         - (lhs_frequency->val < rhs_frequency->val);
+    struct Priority_int const *const lhs = context.type_left;
+    struct Priority_int const *const rhs = context.type_right;
+    assert(lhs);
+    assert(rhs);
+    return (lhs->kv.val > rhs->kv.val) - (lhs->kv.val < rhs->kv.val);
+}
+
+static void
+increase_priority(CCC_Arguments const arguments) {
+    struct Priority_int *const p = arguments.type;
+    ++p->kv.val;
 }
 
 /** I like the heap sort method because it is fast, uses very little space,
@@ -75,49 +79,42 @@ top_k_frequent_elements(
     Flat_hash_map *const frequency,
     CCC_Allocator const *const allocator
 ) {
+    reserve(frequency, count(&input->nums).count, allocator);
+    /* No cleanup is needed for the priority queue. It lives in the map. */
+    Priority_queue max_heap = priority_queue_default(
+        struct Priority_int,
+        node,
+        CCC_ORDER_GREATER,
+        (CCC_Comparator){.compare = compare_heap_elements}
+    );
     for (int const *i = begin(&input->nums); i != end(&input->nums);
          i = next(&input->nums, i)) {
-        flat_hash_map_or_insert_with(
+        struct Priority_int *const entry = flat_hash_map_or_insert_with(
             flat_hash_map_and_modify_with(
-                flat_hash_map_entry_wrap(frequency, i, allocator),
-                struct Int_key_val,
-                { ++T->val; }
+                flat_hash_map_entry_wrap(frequency, i, &(CCC_Allocator){}),
+                struct Priority_int,
+                {
+                    priority_queue_update(
+                        &max_heap,
+                        &T->node,
+                        &(CCC_Modifier){.modify = increase_priority}
+                    );
+                }
             ),
-            (struct Int_key_val){
-                .key = *i,
-                .val = 1,
-            }
+            (struct Priority_int){.kv = {.key = *i, .val = 1}}
         );
+        if (entry->kv.val == 1) {
+            (void)push(&max_heap, &entry->node, &(CCC_Allocator){});
+        }
     }
     if (count(frequency).count < (size_t)input->k) {
         return (struct Top_k_frequent_elements_output){};
     }
-    Buffer heap_storage
-        = buffer_with_capacity(int, *allocator, count(frequency).count);
-    defer {
-        clear_and_free(&heap_storage, &(CCC_Destructor){}, allocator);
-    }
-    for (struct Int_key_val const *i = begin(frequency); i != end(frequency);
-         i = next(frequency, i)) {
-        (void)push_back(&heap_storage, i, allocator);
-    }
-    /* The priority queue does not need allocation permissions. It just wraps
-       the provided buffer and orders it. */
-    Flat_priority_queue max_heap = CCC_flat_priority_queue_heapify(
-        int,
-        CCC_ORDER_GREATER,
-        ((CCC_Comparator){
-            .compare = compare_heap_elements,
-            .context = frequency,
-        }),
-        capacity(&heap_storage).count,
-        count(&heap_storage).count,
-        begin(&heap_storage)
-    );
     int to_push = input->k;
     while (to_push && !is_empty(&max_heap)) {
-        (void)push_back(top_k, front(&max_heap), allocator);
-        pop(&max_heap, &(int){0});
+        struct Priority_int const *const max = front(&max_heap);
+        (void)push_back(top_k, &max->kv.key, allocator);
+        pop(&max_heap, &(CCC_Allocator){});
         --to_push;
     }
     return (struct Top_k_frequent_elements_output){*top_k};
@@ -127,8 +124,8 @@ int
 main(void) {
     TCG_Count passed = 0;
     Flat_hash_map frequency_scratch_map = CCC_flat_hash_map_default(
-        struct Int_key_val,
-        key,
+        struct Priority_int,
+        kv.key,
         (CCC_Hasher){
             .hash = hash_map_int_to_u64,
             .compare = hash_map_int_key_val_order,
