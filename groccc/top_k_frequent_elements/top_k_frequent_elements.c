@@ -112,13 +112,14 @@ top_k_frequent_elements(
         CCC_Handle_index const index = array_adaptive_map_or_insert_with(
             array_adaptive_map_and_modify_with(
                 array_adaptive_map_handle_wrap(frequency, i),
-                struct Priority_int,
+                struct Priority_int *,
                 {
                     /* T is given to us by the and modify operation for this
                        closure. The map does not care about the frequency value,
                        only the key. But the priority queue needs to be made
                        aware of the value update and we can't nest container
-                       closures so use a callback. */
+                       closures so use a callback. Increase priority is a simple
+                       static function so compiler will easily inline it. */
                     priority_queue_increase(
                         &max_heap,
                         &T->node,
