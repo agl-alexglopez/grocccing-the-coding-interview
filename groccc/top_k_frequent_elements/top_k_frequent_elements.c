@@ -5,10 +5,10 @@
 
 #define BUFFER_USING_NAMESPACE_CCC
 #define TRAITS_USING_NAMESPACE_CCC
-#define ARRAY_ADAPTIVE_MAP_USING_NAMESPACE_CCC
+#define FLAT_HASH_MAP_USING_NAMESPACE_CCC
 #define PRIORITY_QUEUE_USING_NAMESPACE_CCC
-#include "ccc/array_adaptive_map.h"
 #include "ccc/buffer.h"
+#include "ccc/flat_hash_map.h"
 #include "ccc/traits.h"
 #include "ccc/types.h"
 
@@ -72,12 +72,6 @@ compare_priority_int_keys(CCC_Key_comparator_arguments const context) {
     return (*lhs_key > rhs->kv.key) - (*lhs_key < rhs->kv.key);
 }
 
-static void
-increase_priority(CCC_Arguments const arguments) {
-    struct Priority_int *const p = arguments.type;
-    ++p->kv.val;
-}
-
 /** It is not often I get to test such compositions of containers even though
 this is not how the problem would normally be solved. It presents some very
 interesting runtime characteristics when combining the frequency counting and
@@ -86,7 +80,7 @@ static struct Top_k_frequent_elements_output
 top_k_frequent_elements(
     struct Top_k_frequent_elements_input const *const input,
     Buffer *const top_k,
-    Array_adaptive_map *const frequency,
+    Flat_hash_map *const frequency,
     CCC_Allocator const *const allocator
 ) {
     /* The map will be prohibited from resizing later. The priority queue needs
@@ -99,39 +93,32 @@ top_k_frequent_elements(
         CCC_ORDER_GREATER,
         (CCC_Comparator){.compare = compare_priority_int_frequencies}
     );
-    /* This is actually one O(N*log(N)) pass over the array. The map gives
-       amortized O(log(N)) queries but because it is adaptive, the more
-       frequently accessed elements will stay close to the root and we likely
-       benefit from many O(1) hits while we count. We also only insert, so
-       elements remain contiguous from index [O, count). The priority queue
-       update operation in the pairing priority queue is a strict O(1)
-       operation. We will pay for this later in the pop phase. Push is also
-       a constant time operation in this type of heap. */
+    /* This is actually one O(N) pass over the array. The map gives O(1)
+       queries.The priority queue update operation in the pairing priority
+       queue is a strict O(1) operation. We will pay for this later in the pop
+       phase. Push is also a constant time operation in this type of heap. */
     for (int const *i = begin(&input->nums); i != end(&input->nums);
          i = next(&input->nums, i)) {
-        CCC_Handle_index const index = array_adaptive_map_or_insert_with(
-            array_adaptive_map_and_modify_with(
-                array_adaptive_map_handle_wrap(frequency, i),
-                struct Priority_int *,
+        struct Priority_int *const entry = flat_hash_map_or_insert_with(
+            flat_hash_map_and_modify_with(
+                flat_hash_map_entry_wrap(frequency, i, &(CCC_Allocator){}),
+                struct Priority_int * e,
                 {
-                    /* T is given to us by the and modify operation for this
-                       closure. The map does not care about the frequency value,
-                       only the key. But the priority queue needs to be made
-                       aware of the value update and we can't nest container
-                       closures so use a callback. Increase priority is a simple
-                       static function so compiler will easily inline it. */
-                    priority_queue_increase(
-                        &max_heap,
-                        &T->node,
-                        &(CCC_Modifier){.modify = increase_priority}
-                    );
+                    /* Here we can use nested closures to ensure the priority
+                       queue sees the increase to our frequency count. We don't
+                       have the priority queue element until we obtain it from
+                       an Occupied entry in the map. The priority queue closure
+                       expects us to have a named references to an element in
+                       the priority queue. Therefore both closures work
+                       perfectly together. */
+                    e = priority_queue_increase_with(&max_heap, e, {
+                        ++e->kv.val;
+                    });
+                    assert(e);
                 }
             ),
-            &(CCC_Allocator){},
             (struct Priority_int){.kv = {.key = *i, .val = 1}}
         );
-        struct Priority_int *const entry
-            = array_adaptive_map_at(frequency, index);
         assert(entry);
         if (entry->kv.val == 1) {
             (void)push(&max_heap, &entry->node, &(CCC_Allocator){});
@@ -158,10 +145,13 @@ top_k_frequent_elements(
 int
 main(void) {
     TCG_Count passed = 0;
-    Array_adaptive_map frequency_scratch_map = array_adaptive_map_default(
+    Flat_hash_map frequency_scratch_map = flat_hash_map_default(
         struct Priority_int,
         kv.key,
-        (CCC_Key_comparator){.compare = compare_priority_int_keys}
+        (CCC_Hasher){
+            .hash = hash_map_int_to_u64,
+            .compare = compare_priority_int_keys,
+        }
     );
     Buffer top_k_scratch_buffer = buffer_default(int);
     defer {
