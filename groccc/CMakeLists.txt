@@ -17,6 +17,12 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(ccc)
 target_compile_options(ccc PRIVATE "-w")
 get_target_property(ccc_SOURCE_DIR ccc SOURCE_DIR)
+target_include_directories(ccc PRIVATE
+    ${CMAKE_SOURCE_DIR}/configuration
+)
+target_compile_definitions(ccc PRIVATE
+    CCC_USER_CONFIGURATION="ccc_configuration.h"
+)
 
 #########################   Fetch Str_view Library     ########################
 
