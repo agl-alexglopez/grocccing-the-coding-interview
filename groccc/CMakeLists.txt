@@ -10,18 +10,19 @@ project("groccc-problems"
 include(FetchContent)
 FetchContent_Declare(
     ccc
-    URL https://github.com/skeletoss/ccc/releases/download/v0.72.1/ccc-v0.72.1.zip
-    URL_HASH SHA256=9271fb3d7d4fcdf3522baa04b2ba650a60afd3a73345f693462227943f02e891
+    URL https://github.com/skeletoss/ccc/releases/download/v0.72.3/ccc-v0.72.3.zip
+    URL_HASH SHA256=d214d4b55df38d50848622840af042399dfe61c4f6c06fe543199affd95c85be
     DOWNLOAD_EXTRACT_TIMESTAMP FALSE
 )
 FetchContent_MakeAvailable(ccc)
 target_compile_options(ccc PRIVATE "-w")
 get_target_property(ccc_SOURCE_DIR ccc SOURCE_DIR)
+# We will leave this here to always be able to test CCC freestanding. But we
+# won't define the cache variables or set the user configuration here. Only do
+# that at the command line via -DCCC_USER_CONFIGURATION="ccc_configuration.h"
+# or via a cache variable in CMakePresets.json.
 target_include_directories(ccc PRIVATE
     ${CMAKE_SOURCE_DIR}/configuration
-)
-target_compile_definitions(ccc PRIVATE
-    CCC_USER_CONFIGURATION="ccc_configuration.h"
 )
 
 #########################   Fetch Str_view Library     ########################
