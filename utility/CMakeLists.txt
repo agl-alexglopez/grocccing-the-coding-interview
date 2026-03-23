@@ -14,6 +14,7 @@ target_include_directories(loggers INTERFACE $<BUILD_INTERFACE:${CMAKE_SOURCE_DI
 add_dependencies(utility loggers)
 
 add_library(string_arena string_arena.h string_arena.c)
+target_link_libraries(string_arena ccc)
 target_include_directories(string_arena PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}>)
 add_dependencies(utility string_arena)
 

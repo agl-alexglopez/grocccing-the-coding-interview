@@ -120,7 +120,9 @@ group_anagrams(
             digits_character_count += snprintf(NULL, 0, "%d", *freq);
         }
         struct String_int key_value = {
-            .key = string_arena_allocate(str_arena, digits_character_count + 1),
+            .key = string_arena_allocate(
+                str_arena, digits_character_count + 1, allocator
+            ),
             .val = index,
         };
         if (key_value.key.error) {
@@ -166,7 +168,7 @@ main(void) {
     /* We will allow these data structures to act as scratch buffers between
        tests so we are not constantly allocating in a tight testing loop. Just
        remember to clear (not free) their storage between tests. */
-    struct String_arena str_arena = string_arena_create(4096);
+    struct String_arena str_arena = string_arena_create(4096, &std_allocator);
     Buffer groups = buffer_default(Buffer);
     Flat_hash_map anagram_map = CCC_flat_hash_map_default(
         struct String_int,
@@ -178,7 +180,7 @@ main(void) {
         }
     );
     defer {
-        string_arena_free(&str_arena);
+        string_arena_free(&str_arena, &std_allocator);
         clear_and_free(&anagram_map, &(CCC_Destructor){}, &std_allocator);
         clear_and_free(
             &groups,
