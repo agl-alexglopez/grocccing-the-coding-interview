@@ -29,7 +29,7 @@ daily_temperatures(
     CCC_Allocator const *const allocator
 ) {
     size_t const end = count(&input->temperatures).count;
-    buffer_size_set(&input->days_until_warmer_temperature_result, end);
+    buffer_count_set(&input->days_until_warmer_temperature_result, end);
     Buffer index_stack = buffer_with_capacity(int, *allocator, end);
     defer {
         clear_and_free(&index_stack, &(CCC_Destructor){}, allocator);
