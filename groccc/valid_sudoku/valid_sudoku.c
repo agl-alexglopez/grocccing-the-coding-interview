@@ -2,6 +2,7 @@
 #include <stddef.h>
 
 #define FLAT_BITSET_USING_NAMESPACE_CCC
+
 #include "ccc/flat_bitset.h"
 #include "ccc/types.h"
 
