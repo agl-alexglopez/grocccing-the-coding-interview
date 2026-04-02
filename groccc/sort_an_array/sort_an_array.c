@@ -3,10 +3,10 @@
 #include "utility/loggers.h"
 #include "utility/test_case_generator.h"
 
-#define BUFFER_USING_NAMESPACE_CCC
+#define FLAT_BUFFER_USING_NAMESPACE_CCC
 #define TRAITS_USING_NAMESPACE_CCC
 #define FLAT_PRIORITY_QUEUE_USING_NAMESPACE_CCC
-#include "ccc/buffer.h"
+#include "ccc/flat_buffer.h"
 #include "ccc/sort.h"
 #include "ccc/traits.h"
 #include "ccc/types.h"
@@ -21,7 +21,7 @@ compare_ints(CCC_Comparator_arguments const arguments) {
 }
 
 static inline bool
-buffers_match(Buffer const *const a, Buffer const *const b) {
+buffers_match(Flat_buffer const *const a, Flat_buffer const *const b) {
     if (count(a).count != count(b).count) {
         return false;
     }

@@ -74,7 +74,7 @@ two_sum(
     assert(is_empty(map));
     for (int const *i = begin(&test_case->nums); i != end(&test_case->nums);
          i = next(&test_case->nums, i)) {
-        size_t const index = buffer_index(&test_case->nums, i).count;
+        size_t const index = flat_buffer_index(&test_case->nums, i).count;
         struct Int_key_val const *const other_addend = get_key_value(
             map,
             &(int){
@@ -91,7 +91,7 @@ two_sum(
             map,
             &(struct Int_key_val){
                 .key = *i,
-                .val = buffer_index(&test_case->nums, i).count,
+                .val = flat_buffer_index(&test_case->nums, i).count,
             },
             allocator
         );

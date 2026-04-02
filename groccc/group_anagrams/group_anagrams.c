@@ -5,9 +5,9 @@
 #include <stdlib.h>
 
 #define TRAITS_USING_NAMESPACE_CCC
-#define BUFFER_USING_NAMESPACE_CCC
+#define FLAT_BUFFER_USING_NAMESPACE_CCC
 #define FLAT_HASH_MAP_USING_NAMESPACE_CCC
-#include "ccc/buffer.h"
+#include "ccc/flat_buffer.h"
 #include "ccc/flat_hash_map.h"
 #include "ccc/traits.h"
 #include "ccc/types.h"
@@ -55,13 +55,13 @@ hash_string_offset(CCC_Key_arguments const context) {
 
 static void
 destroy_nested_buffers(CCC_Arguments const str_view_buffer) {
-    buffer_clear_and_free(
+    flat_buffer_clear_and_free(
         str_view_buffer.type, &(CCC_Destructor){}, &std_allocator
     );
 }
 
 static inline bool
-contains_str(Buffer const *const strs, SV_Str_view const *const str) {
+contains_str(Flat_buffer const *const strs, SV_Str_view const *const str) {
     for (SV_Str_view const *s = begin(strs); s != end(strs);
          s = next(strs, s)) {
         if (SV_compare(*s, *str) == SV_ORDER_EQUAL) {
@@ -76,14 +76,16 @@ is_correct(
     struct Group_anagrams_output const *const a,
     struct Group_anagrams_output const *const b
 ) {
-    if (count(&a->buffer_of_groups).count
-        != count(&b->buffer_of_groups).count) {
+    if (count(&a->flat_buffer_of_groups).count
+        != count(&b->flat_buffer_of_groups).count) {
         return false;
     }
-    size_t const end = count(&a->buffer_of_groups).count;
+    size_t const end = count(&a->flat_buffer_of_groups).count;
     for (size_t i = 0; i < end; ++i) {
-        Buffer const *const a_groups = buffer_at(&a->buffer_of_groups, i);
-        Buffer const *const b_groups = buffer_at(&b->buffer_of_groups, i);
+        Flat_buffer const *const a_groups
+            = flat_buffer_at(&a->flat_buffer_of_groups, i);
+        Flat_buffer const *const b_groups
+            = flat_buffer_at(&b->flat_buffer_of_groups, i);
         if (count(a_groups).count != count(b_groups).count) {
             return false;
         }
@@ -101,18 +103,18 @@ static struct Group_anagrams_output
 group_anagrams(
     struct Group_anagrams_input const *input,
     struct String_arena *const str_arena,
-    Buffer *const groups,
+    Flat_buffer *const groups,
     Flat_hash_map *const anagram_map,
     CCC_Allocator const *const allocator
 ) {
     int index = 0;
     for (SV_Str_view const *str = begin(&input->strs); str != end(&input->strs);
          str = next(&input->strs, str)) {
-        Buffer chars
-            = buffer_with_storage('z' - 'a' + 1, (int['z' - 'a' + 1]){});
+        Flat_buffer chars
+            = flat_buffer_with_storage('z' - 'a' + 1, (int['z' - 'a' + 1]){});
         for (char const *c = SV_begin(*str); c != SV_end(*str);
              c = SV_next(c)) {
-            (*buffer_as(&chars, int, *c - 'a'))++;
+            (*flat_buffer_as(&chars, int, *c - 'a'))++;
         }
         int digits_character_count = 1;
         for (int const *freq = next(&chars, begin(&chars)); freq != end(&chars);
@@ -148,13 +150,13 @@ group_anagrams(
                anagram character arrays. */
             string_arena_pop_str(str_arena, &key_value.key);
             struct String_int const *const inserted = unwrap(&anagram);
-            Buffer *const group = buffer_at(groups, inserted->val);
-            (void)buffer_push_back(group, str, allocator);
+            Flat_buffer *const group = flat_buffer_at(groups, inserted->val);
+            (void)flat_buffer_push_back(group, str, allocator);
         } else {
-            buffer_emplace_back(
+            flat_buffer_emplace_back(
                 groups,
                 allocator,
-                buffer_from(*allocator, 0, (SV_Str_view[]){*str})
+                flat_buffer_from(*allocator, 0, (SV_Str_view[]){*str})
             );
             ++index;
         }
@@ -169,7 +171,7 @@ main(void) {
        tests so we are not constantly allocating in a tight testing loop. Just
        remember to clear (not free) their storage between tests. */
     struct String_arena str_arena = string_arena_create(4096, &std_allocator);
-    Buffer groups = buffer_default(Buffer);
+    Flat_buffer groups = flat_buffer_default(Flat_buffer);
     Flat_hash_map anagram_map = CCC_flat_hash_map_default(
         struct String_int,
         key,

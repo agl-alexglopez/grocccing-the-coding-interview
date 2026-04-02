@@ -3,11 +3,11 @@
 #include <stddef.h>
 #include <string.h>
 
-#define BUFFER_USING_NAMESPACE_CCC
+#define FLAT_BUFFER_USING_NAMESPACE_CCC
 #define TRAITS_USING_NAMESPACE_CCC
 #define FLAT_HASH_MAP_USING_NAMESPACE_CCC
 #define PRIORITY_QUEUE_USING_NAMESPACE_CCC
-#include "ccc/buffer.h"
+#include "ccc/flat_buffer.h"
 #include "ccc/flat_hash_map.h"
 #include "ccc/traits.h"
 #include "ccc/types.h"
@@ -26,7 +26,7 @@ struct Priority_int {
 };
 
 static inline bool
-has_num(Buffer const *const b, int const i) {
+has_num(Flat_buffer const *const b, int const i) {
     for (int const *num = begin(b); num != end(b); num = next(b, num)) {
         if (*num == i) {
             return true;
@@ -36,14 +36,14 @@ has_num(Buffer const *const b, int const i) {
 }
 
 static inline bool
-are_equal(Buffer const *const a, Buffer const *const b) {
+are_equal(Flat_buffer const *const a, Flat_buffer const *const b) {
     if (count(a).count != count(b).count) {
         return false;
     }
     if (!count(a).count) {
         return true;
     }
-    if (memcmp(begin(a), begin(b), buffer_count_bytes(a).count) == 0) {
+    if (memcmp(begin(a), begin(b), flat_buffer_count_bytes(a).count) == 0) {
         return true;
     }
     for (int const *i = begin(a); i != end(a); i = next(a, i)) {
@@ -79,7 +79,7 @@ priority queue updating in one pass. */
 static struct Top_k_frequent_elements_output
 top_k_frequent_elements(
     struct Top_k_frequent_elements_input const *const input,
-    Buffer *const top_k,
+    Flat_buffer *const top_k,
     Flat_hash_map *const frequency,
     CCC_Allocator const *const allocator
 ) {
@@ -153,7 +153,7 @@ main(void) {
             .compare = compare_priority_int_keys,
         }
     );
-    Buffer top_k_scratch_buffer = buffer_default(int);
+    Flat_buffer top_k_scratch_buffer = flat_buffer_default(int);
     defer {
         clear_and_free(
             &top_k_scratch_buffer, &(CCC_Destructor){}, &std_allocator

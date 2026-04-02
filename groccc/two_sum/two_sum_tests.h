@@ -4,11 +4,11 @@
 
 #include "utility/test_case_generator.h"
 
-#include "ccc/buffer.h"
+#include "ccc/flat_buffer.h"
 
 struct Two_sum_input {
     int target;
-    CCC_Buffer const nums;
+    CCC_Flat_buffer const nums;
 };
 
 struct Two_sum_output {
@@ -23,7 +23,7 @@ TCG_test_case("empty", {
 TCG_test_case("negatives", {
     .input = {
         .target = 15,
-        .nums = CCC_buffer_with_storage(
+        .nums = CCC_flat_buffer_with_storage(
             10,
             (int[10]){1, 3, -980, 6, 7, 13, 44, 32, 995, -1,}
         ),
@@ -35,7 +35,7 @@ TCG_test_case("negatives", {
 TCG_test_case("no solution", {
     .input = {
         .target = 2,
-        .nums = CCC_buffer_with_storage(
+        .nums = CCC_flat_buffer_with_storage(
             4,
             (int[4]){1, 3, 4, 5}
         ),
@@ -45,7 +45,7 @@ TCG_test_case("no solution", {
 TCG_test_case("multiple choices pick lowest indices", {
     .input = {
         .target = 9,
-        .nums = CCC_buffer_with_storage(
+        .nums = CCC_flat_buffer_with_storage(
             6,
             (int[6]){2, 7, 11, 15, 7, 2}
         ),
@@ -57,7 +57,7 @@ TCG_test_case("multiple choices pick lowest indices", {
 TCG_test_case("duplicate values different pair", {
     .input = {
         .target = 10,
-        .nums = CCC_buffer_with_storage(
+        .nums = CCC_flat_buffer_with_storage(
             7,
             (int[7]){5, 5, 3, 7, 5, 2, 8}
         ),

@@ -3,19 +3,19 @@
 
 #include "utility/test_case_generator.h"
 
-#include "ccc/buffer.h"
+#include "ccc/flat_buffer.h"
 #include "str_view/str_view.h"
 
 /** The input strings to the problem. */
 struct Group_anagrams_input {
     /** A buffer of SV_Str_view strings. */
-    CCC_Buffer strs;
+    CCC_Flat_buffer strs;
 };
 
 /** The output buffer of buffer anagram SV_Str_view groups. */
 struct Group_anagrams_output {
     /** A buffer of buffers. Each buffer groups the string view anagrams. */
-    CCC_Buffer buffer_of_groups;
+    CCC_Flat_buffer flat_buffer_of_groups;
 };
 
 TCG_tests_begin(group_anagrams_tests,
@@ -23,7 +23,7 @@ TCG_tests_begin(group_anagrams_tests,
                 struct Group_anagrams_output)
 TCG_test_case("3 groups", {
     .input = {
-        .strs = CCC_buffer_with_storage(
+        .strs = CCC_flat_buffer_with_storage(
             6,
             (SV_Str_view[6]){
                 SV_from("eat"),
@@ -36,10 +36,10 @@ TCG_test_case("3 groups", {
         ),
     },
     .output = {
-        .buffer_of_groups = CCC_buffer_with_storage(
+        .flat_buffer_of_groups = CCC_flat_buffer_with_storage(
             3,
-            (CCC_Buffer[3]){
-                CCC_buffer_with_storage(
+            (CCC_Flat_buffer[3]){
+                CCC_flat_buffer_with_storage(
                     3,
                     (SV_Str_view[3]){
                         SV_from("ate"),
@@ -47,14 +47,14 @@ TCG_test_case("3 groups", {
                         SV_from("tea"),
                     }
                 ),
-                CCC_buffer_with_storage(
+                CCC_flat_buffer_with_storage(
                     2,
                     (SV_Str_view[2]){
                         SV_from("nat"),
                         SV_from("tan"),
                     }
                 ),
-                CCC_buffer_with_storage(
+                CCC_flat_buffer_with_storage(
                     1,
                     (SV_Str_view[1]){
                         SV_from("bat"),
@@ -66,7 +66,7 @@ TCG_test_case("3 groups", {
 })
 TCG_test_case("all identical", {
     .input = {
-        .strs = CCC_buffer_with_storage(
+        .strs = CCC_flat_buffer_with_storage(
             5,
             (SV_Str_view[5]){
                 SV_from("aa"),
@@ -78,10 +78,10 @@ TCG_test_case("all identical", {
         ),
     },
     .output = {
-        .buffer_of_groups = CCC_buffer_with_storage(
+        .flat_buffer_of_groups = CCC_flat_buffer_with_storage(
             1,
-            (CCC_Buffer[1]){
-                CCC_buffer_with_storage(
+            (CCC_Flat_buffer[1]){
+                CCC_flat_buffer_with_storage(
                     5,
                     (SV_Str_view[5]){
                         SV_from("aa"),
@@ -97,7 +97,7 @@ TCG_test_case("all identical", {
 })
 TCG_test_case("no anagrams", {
     .input = {
-        .strs = CCC_buffer_with_storage(
+        .strs = CCC_flat_buffer_with_storage(
             3,
             (SV_Str_view[3]){
                 SV_from("abc"),
@@ -107,16 +107,16 @@ TCG_test_case("no anagrams", {
         ),
     },
     .output = {
-        .buffer_of_groups = CCC_buffer_with_storage(
+        .flat_buffer_of_groups = CCC_flat_buffer_with_storage(
             3,
-            (CCC_Buffer[3]){
-                CCC_buffer_with_storage(
+            (CCC_Flat_buffer[3]){
+                CCC_flat_buffer_with_storage(
                     1, (SV_Str_view[1]){ SV_from("abc") }
                 ),
-                CCC_buffer_with_storage(
+                CCC_flat_buffer_with_storage(
                     1, (SV_Str_view[1]){ SV_from("def") }
                 ),
-                CCC_buffer_with_storage(
+                CCC_flat_buffer_with_storage(
                     1, (SV_Str_view[1]){ SV_from("ghi") }
                 ),
             }
@@ -125,15 +125,15 @@ TCG_test_case("no anagrams", {
 })
 TCG_test_case("empty input", {
     .input = {
-        .strs = CCC_buffer_default(SV_Str_view),
+        .strs = CCC_flat_buffer_default(SV_Str_view),
     },
     .output = {
-        .buffer_of_groups = CCC_buffer_default(CCC_Buffer),
+        .flat_buffer_of_groups = CCC_flat_buffer_default(CCC_Flat_buffer),
     },
 })
 TCG_test_case("single string", {
     .input = {
-        .strs = CCC_buffer_with_storage(
+        .strs = CCC_flat_buffer_with_storage(
             1,
             (SV_Str_view[1]){
                 SV_from("solo"),
@@ -141,10 +141,10 @@ TCG_test_case("single string", {
         ),
     },
     .output = {
-        .buffer_of_groups = CCC_buffer_with_storage(
+        .flat_buffer_of_groups = CCC_flat_buffer_with_storage(
             1,
-            (CCC_Buffer[1]){
-                CCC_buffer_with_storage(
+            (CCC_Flat_buffer[1]){
+                CCC_flat_buffer_with_storage(
                     1,
                     (SV_Str_view[1]){ SV_from("solo") }
                 ),
@@ -154,7 +154,7 @@ TCG_test_case("single string", {
 })
 TCG_test_case("mixed length anagrams", {
     .input = {
-        .strs = CCC_buffer_with_storage(
+        .strs = CCC_flat_buffer_with_storage(
             7,
             (SV_Str_view[7]){
                 SV_from("abcd"),
@@ -168,10 +168,10 @@ TCG_test_case("mixed length anagrams", {
         ),
     },
     .output = {
-        .buffer_of_groups = CCC_buffer_with_storage(
+        .flat_buffer_of_groups = CCC_flat_buffer_with_storage(
             3,
-            (CCC_Buffer[3]){
-                CCC_buffer_with_storage(
+            (CCC_Flat_buffer[3]){
+                CCC_flat_buffer_with_storage(
                     3,
                     (SV_Str_view[3]){
                         SV_from("abcd"),
@@ -179,7 +179,7 @@ TCG_test_case("mixed length anagrams", {
                         SV_from("dabc"),
                     }
                 ),
-                CCC_buffer_with_storage(
+                CCC_flat_buffer_with_storage(
                     3,
                     (SV_Str_view[3]){
                         SV_from("abc"),
@@ -187,7 +187,7 @@ TCG_test_case("mixed length anagrams", {
                         SV_from("cab"),
                     }
                 ),
-                CCC_buffer_with_storage(
+                CCC_flat_buffer_with_storage(
                     1,
                     (SV_Str_view[1]){
                         SV_from("zzz"),

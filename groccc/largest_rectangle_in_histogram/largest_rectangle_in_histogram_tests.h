@@ -3,10 +3,10 @@
 
 #include "utility/test_case_generator.h"
 
-#include "ccc/buffer.h"
+#include "ccc/flat_buffer.h"
 
 struct Largest_rectangle_in_histogram_input {
-    CCC_Buffer heights;
+    CCC_Flat_buffer heights;
 };
 
 struct Largest_rectangle_in_histogram_output {
@@ -18,7 +18,7 @@ TCG_tests_begin(largest_rectangle_in_histogram_tests,
                 struct Largest_rectangle_in_histogram_output)
 TCG_test_case("area 10", {
     .input = {
-        .heights = CCC_buffer_with_storage(
+        .heights = CCC_flat_buffer_with_storage(
             6, (int[6]){2, 1, 5, 6, 2, 3}
         ),
     },
@@ -28,7 +28,7 @@ TCG_test_case("area 10", {
 })
 TCG_test_case("area 4", {
     .input = {
-        .heights = CCC_buffer_with_storage(
+        .heights = CCC_flat_buffer_with_storage(
             2, (int[3]){2, 4}
         ),
     },
@@ -38,7 +38,7 @@ TCG_test_case("area 4", {
 })
 TCG_test_case("area all bars at height 2", {
     .input = {
-        .heights = CCC_buffer_with_storage(
+        .heights = CCC_flat_buffer_with_storage(
             6, (int[6]){2, 2, 5, 6, 2, 3}
         ),
     },

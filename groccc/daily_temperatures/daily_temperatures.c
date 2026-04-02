@@ -1,9 +1,9 @@
 #include <stddef.h>
 #include <string.h>
 
-#define BUFFER_USING_NAMESPACE_CCC
+#define FLAT_BUFFER_USING_NAMESPACE_CCC
 #define TRAITS_USING_NAMESPACE_CCC
-#include "ccc/buffer.h"
+#include "ccc/flat_buffer.h"
 #include "ccc/traits.h"
 
 #include "daily_temperatures_tests.h"
@@ -13,14 +13,14 @@
 #include "utility/test_case_generator.h"
 
 static inline bool
-are_equal(Buffer const *const a, Buffer const *const b) {
+are_equal(Flat_buffer const *const a, Flat_buffer const *const b) {
     if (count(a).count != count(b).count) {
         return false;
     }
     if (!count(a).count) {
         return true;
     }
-    return memcmp(begin(a), begin(b), buffer_count_bytes(a).count) == 0;
+    return memcmp(begin(a), begin(b), flat_buffer_count_bytes(a).count) == 0;
 }
 
 static struct Daily_temperatures_output
@@ -29,21 +29,23 @@ daily_temperatures(
     CCC_Allocator const *const allocator
 ) {
     size_t const end = count(&input->temperatures).count;
-    buffer_count_set(&input->days_until_warmer_temperature_result, end);
-    Buffer index_stack = buffer_with_capacity(int, *allocator, end);
+    flat_buffer_count_set(&input->days_until_warmer_temperature_result, end);
+    Flat_buffer index_stack = flat_buffer_with_capacity(int, *allocator, end);
     defer {
         clear_and_free(&index_stack, &(CCC_Destructor){}, allocator);
     }
     for (size_t i = 0; i < end; ++i) {
-        int const *const cur_temp = buffer_at(&input->temperatures, i);
-        while (
-            !is_empty(&index_stack)
-            && *cur_temp > *buffer_as(
-                   &input->temperatures, int, *buffer_back_as(&index_stack, int)
-               )) {
-            int const index = *buffer_back_as(&index_stack, int);
-            *buffer_as(&input->days_until_warmer_temperature_result, int, index)
-                = (int)i - index;
+        int const *const cur_temp = flat_buffer_at(&input->temperatures, i);
+        while (!is_empty(&index_stack)
+               && *cur_temp > *flat_buffer_as(
+                      &input->temperatures,
+                      int,
+                      *flat_buffer_back_as(&index_stack, int)
+                  )) {
+            int const index = *flat_buffer_back_as(&index_stack, int);
+            *flat_buffer_as(
+                &input->days_until_warmer_temperature_result, int, index
+            ) = (int)i - index;
             (void)pop_back(&index_stack);
         }
         (void)push_back(&index_stack, &i, allocator);
