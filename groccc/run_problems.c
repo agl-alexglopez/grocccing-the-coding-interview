@@ -107,21 +107,38 @@ run(SV_Str_view const problems_dir) {
         });
         switch (res) {
             case TCG_ERROR:
-                logerr("\n%s%s%s\n%s %s%s%s)%s\n", LOG_RED, err_message,
-                       LOG_CYAN, SV_begin(entry), LOG_RED, fail_mark, LOG_CYAN,
-                       LOG_NONE);
+                logerr(
+                    "\n%s%s%s\n%s %s%s%s)%s\n",
+                    LOG_RED,
+                    err_message,
+                    LOG_CYAN,
+                    SV_begin(entry),
+                    LOG_RED,
+                    fail_mark,
+                    LOG_CYAN,
+                    LOG_NONE
+                );
                 break;
             case TCG_PASS:
-                logout(" %s%s%s)%s\n", LOG_GREEN, pass_mark, LOG_CYAN,
-                       LOG_NONE);
+                logout(
+                    " %s%s%s)%s\n", LOG_GREEN, pass_mark, LOG_CYAN, LOG_NONE
+                );
                 break;
             case TCG_FAIL:
                 logout("\n%s%s%s)%s\n", LOG_RED, fail_mark, LOG_CYAN, LOG_NONE);
                 break;
             default:
-                logerr("\n%s%s%s\n%s %s%s%s)%s\n", LOG_RED,
-                       unclassified_message, LOG_CYAN, SV_begin(entry), LOG_RED,
-                       fail_mark, LOG_CYAN, LOG_NONE);
+                logerr(
+                    "\n%s%s%s\n%s %s%s%s)%s\n",
+                    LOG_RED,
+                    unclassified_message,
+                    LOG_CYAN,
+                    SV_begin(entry),
+                    LOG_RED,
+                    fail_mark,
+                    LOG_CYAN,
+                    LOG_NONE
+                );
                 break;
         }
         if (res == TCG_PASS) {
@@ -156,11 +173,20 @@ run_problem_process(struct Path_bin pb) {
         int const sig = WTERMSIG(status);
         char const *const message = strsignal(sig);
         if (message) {
-            logerr("%sProcess killed with signal %d: %s%s\n", LOG_RED, sig,
-                   message, LOG_NONE);
+            logerr(
+                "%sProcess killed with signal %d: %s%s\n",
+                LOG_RED,
+                sig,
+                message,
+                LOG_NONE
+            );
         } else {
-            logerr("%sProcess killed with signal %d: unknown signal code%s\n",
-                   LOG_RED, sig, LOG_NONE);
+            logerr(
+                "%sProcess killed with signal %d: unknown signal code%s\n",
+                LOG_RED,
+                sig,
+                LOG_NONE
+            );
         }
     }
     if (!WIFEXITED(status)) {
@@ -174,8 +200,10 @@ static DIR *
 open_problem_dir(SV_Str_view problems_folder) {
     if (SV_is_empty(problems_folder)
         || SV_len(problems_folder) > FILESYS_MAX_PATH) {
-        logerr("Invalid input to path to problem executables %s\n",
-               SV_begin(problems_folder));
+        logerr(
+            "Invalid input to path to problem executables %s\n",
+            SV_begin(problems_folder)
+        );
         return NULL;
     }
     DIR *dir_pointer = opendir(SV_begin(problems_folder));
@@ -187,14 +215,16 @@ open_problem_dir(SV_Str_view problems_folder) {
 }
 
 static bool
-fill_path(char path_buf[FILESYS_MAX_PATH], SV_Str_view problems_dir,
-          SV_Str_view entry) {
+fill_path(
+    char path_buf[FILESYS_MAX_PATH], SV_Str_view problems_dir, SV_Str_view entry
+) {
     size_t const dir_bytes = SV_fill(FILESYS_MAX_PATH, path_buf, problems_dir);
     if (FILESYS_MAX_PATH - dir_bytes < SV_bytes(entry)) {
         logerr("Relative path exceeds FILESYS_MAX_PATH?\n%s", path_buf);
         return false;
     }
-    (void)SV_fill(FILESYS_MAX_PATH - dir_bytes, path_buf + SV_len(problems_dir),
-                  entry);
+    (void)SV_fill(
+        FILESYS_MAX_PATH - dir_bytes, path_buf + SV_len(problems_dir), entry
+    );
     return true;
 }
