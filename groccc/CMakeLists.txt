@@ -10,13 +10,13 @@ project("groccc-problems"
 include(FetchContent)
 FetchContent_Declare(
     ccc
-    URL https://github.com/skeletoss/ccc/releases/download/v0.77.3/ccc-v0.77.3.zip
-    URL_HASH SHA256=167e7050d1487e4749dcb02e177b851b7cd6441b231fffda13dd66704f36b0bc
+    URL https://github.com/skeletoss/ccc/releases/download/v0.77.4/ccc-v0.77.4.zip
+    URL_HASH SHA256=f9626e8707e0a428aaaba8f2bd68c50b7addc09868c2a363f4b9877db510e79c
     DOWNLOAD_EXTRACT_TIMESTAMP FALSE
+    SYSTEM
 )
 FetchContent_MakeAvailable(ccc)
 target_compile_options(ccc PRIVATE "-w")
-get_target_property(ccc_SOURCE_DIR ccc SOURCE_DIR)
 # We will leave this here to always be able to test CCC freestanding. But we
 # won't define the cache variables or set the user configuration here. Only do
 # that at the command line via -DCCC_USER_CONFIGURATION="ccc_configuration.h"
@@ -33,10 +33,10 @@ FetchContent_Declare(
     URL https://github.com/skeletoss/str_view/releases/download/v0.7.1/str_view-v0.7.1.zip
     URL_HASH SHA256=43e1f3de16770542b40f832c2cf50adf7ea4a0b5a4eee19fc31c215b798ccc61
     DOWNLOAD_EXTRACT_TIMESTAMP FALSE
+    SYSTEM
 )
 FetchContent_MakeAvailable(str_view)
 target_compile_options(str_view PRIVATE "-w")
-get_target_property(str_view_SOURCE_DIR str_view SOURCE_DIR)
 
 #########################   Create Problems Target   ##########################
 
@@ -45,11 +45,6 @@ add_custom_target(problems)
 ########################     Add Problem Runner     ###########################
 
 add_executable(run_problems run_problems.c)
-target_include_directories(run_problems
-    SYSTEM
-    PRIVATE
-        ${str_view_SOURCE_DIR}
-)
 target_link_libraries(run_problems str_view::str_view loggers test_case_generator)
 add_dependencies(problems run_problems)
 
@@ -57,20 +52,8 @@ add_dependencies(problems run_problems)
 
 macro(add_problem PROBLEM_NAME)
     add_library(${PROBLEM_NAME}_tests INTERFACE ${PROBLEM_NAME}/${PROBLEM_NAME}_tests.h)
-    target_include_directories(${PROBLEM_NAME}_tests
-        SYSTEM
-        INTERFACE
-            ${str_view_SOURCE_DIR}
-            ${ccc_SOURCE_DIR}
-    )
     target_link_libraries(${PROBLEM_NAME}_tests INTERFACE ccc::ccc str_view::str_view test_case_generator)
     add_executable(${PROBLEM_NAME} ${PROBLEM_NAME}/${PROBLEM_NAME}.c)
-    target_include_directories(${PROBLEM_NAME}
-        SYSTEM
-        PRIVATE
-            ${str_view_SOURCE_DIR}
-            ${ccc_SOURCE_DIR}
-    )
     target_link_libraries(${PROBLEM_NAME}
         PRIVATE
             ccc::ccc
