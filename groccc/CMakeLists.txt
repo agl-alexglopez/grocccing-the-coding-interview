@@ -10,8 +10,8 @@ project("groccc-problems"
 include(FetchContent)
 FetchContent_Declare(
     ccc
-    URL https://github.com/skeletoss/ccc/releases/download/v0.77.4/ccc-v0.77.4.zip
-    URL_HASH SHA256=f9626e8707e0a428aaaba8f2bd68c50b7addc09868c2a363f4b9877db510e79c
+    URL https://github.com/skeletoss/ccc/releases/download/v0.77.5/ccc-v0.77.5.zip
+    URL_HASH SHA256=71f59d3ccc2cb4f457e351d89c9a2e2e0b3d8375216d68e57e12012b5fdaa153
     DOWNLOAD_EXTRACT_TIMESTAMP FALSE
     SYSTEM
 )
