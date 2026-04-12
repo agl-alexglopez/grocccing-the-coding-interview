@@ -32,9 +32,10 @@ endif()
 include(FetchContent)
 FetchContent_Declare(
     ccc
-    URL https://github.com/skeletoss/ccc/releases/download/v0.73.0/ccc-v0.73.0.zip
-    URL_HASH SHA256=aa56aebfd4ba39aa5a1f060ec12f097349777f91ab9e5784dc9d62356dc5f6f0
+    URL https://github.com/skeletoss/ccc/releases/download/v0.77.7/ccc-v0.77.7.zip
+    URL_HASH SHA256=e2c4dd5659091e2200634443beb82dab8b53bae41905c7747cd11a688ca97990
     DOWNLOAD_EXTRACT_TIMESTAMP FALSE
+    SYSTEM
 )
 FetchContent_MakeAvailable(ccc)
 target_compile_options(ccc PRIVATE "-w")
@@ -52,9 +53,10 @@ target_include_directories(ccc PRIVATE
 include(FetchContent)
 FetchContent_Declare(
     str_view
-    URL https://github.com/skeletoss/str_view/releases/download/v0.7.1/str_view-v0.7.1.zip
-    URL_HASH SHA256=43e1f3de16770542b40f832c2cf50adf7ea4a0b5a4eee19fc31c215b798ccc61
+    URL https://github.com/skeletoss/str_view/releases/download/v0.7.6/str_view-v0.7.6.zip
+    URL_HASH SHA256=4ab4e21f1deb16b15f83542489ffc3b136a8e6cbe37d61686abc4dc1d103f3f0
     DOWNLOAD_EXTRACT_TIMESTAMP FALSE
+    SYSTEM
 )
 FetchContent_MakeAvailable(str_view)
 target_compile_options(str_view PRIVATE "-w")

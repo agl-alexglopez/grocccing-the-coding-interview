@@ -5,39 +5,6 @@ project("groccc-problems"
     DESCRIPTION "Problems to groccc."
 )
 
-######################### Fetch C Container Collection ########################
-
-include(FetchContent)
-FetchContent_Declare(
-    ccc
-    URL https://github.com/skeletoss/ccc/releases/download/v0.77.5/ccc-v0.77.5.zip
-    URL_HASH SHA256=71f59d3ccc2cb4f457e351d89c9a2e2e0b3d8375216d68e57e12012b5fdaa153
-    DOWNLOAD_EXTRACT_TIMESTAMP FALSE
-    SYSTEM
-)
-FetchContent_MakeAvailable(ccc)
-target_compile_options(ccc PRIVATE "-w")
-# We will leave this here to always be able to test CCC freestanding. But we
-# won't define the cache variables or set the user configuration here. Only do
-# that at the command line via -DCCC_USER_CONFIGURATION="ccc_configuration.h"
-# or via a cache variable in CMakePresets.json.
-target_include_directories(ccc PRIVATE
-    ${CMAKE_SOURCE_DIR}/configuration
-)
-
-#########################   Fetch Str_view Library     ########################
-
-include(FetchContent)
-FetchContent_Declare(
-    str_view
-    URL https://github.com/skeletoss/str_view/releases/download/v0.7.1/str_view-v0.7.1.zip
-    URL_HASH SHA256=43e1f3de16770542b40f832c2cf50adf7ea4a0b5a4eee19fc31c215b798ccc61
-    DOWNLOAD_EXTRACT_TIMESTAMP FALSE
-    SYSTEM
-)
-FetchContent_MakeAvailable(str_view)
-target_compile_options(str_view PRIVATE "-w")
-
 #########################   Create Problems Target   ##########################
 
 add_custom_target(problems)
