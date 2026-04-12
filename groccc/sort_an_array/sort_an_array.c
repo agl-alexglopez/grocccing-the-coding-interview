@@ -5,7 +5,7 @@
 
 #define FLAT_BUFFER_USING_NAMESPACE_CCC
 #define TRAITS_USING_NAMESPACE_CCC
-#define FLAT_PRIORITY_QUEUE_USING_NAMESPACE_CCC
+#define SORT_USING_NAMESPACE_CCC
 #include "ccc/flat_buffer.h"
 #include "ccc/sort.h"
 #include "ccc/traits.h"
@@ -35,11 +35,11 @@ buffers_match(Flat_buffer const *const a, Flat_buffer const *const b) {
 }
 
 static struct Sort_an_array_output
-sort_an_array(struct Sort_an_array_input *const input) {
+sort_an_array(struct Sort_an_array_input const *const input) {
     if (is_empty(&input->ints)) {
         return (struct Sort_an_array_output){};
     }
-    CCC_Result const result = CCC_sort_heapsort(
+    CCC_Result const result = sort_heapsort(
         &input->ints,
         &(int){},
         CCC_ORDER_LESSER,
