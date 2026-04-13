@@ -32,8 +32,7 @@ endif()
 include(FetchContent)
 FetchContent_Declare(
     ccc
-    URL https://github.com/skeletoss/ccc/releases/download/v0.77.8/ccc-v0.77.8.zip
-    URL_HASH SHA256=e01e84eb9f003ea0ecafd5b57832756606791b8fd2a20b61dd9a5b0d3d8bd277
+    URL https://github.com/SkeletOSS/ccc/archive/refs/heads/main.zip
     DOWNLOAD_EXTRACT_TIMESTAMP FALSE
     SYSTEM
 )
