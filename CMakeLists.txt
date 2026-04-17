@@ -32,6 +32,10 @@ endif()
 include(FetchContent)
 FetchContent_Declare(
     ccc
+    # For testing purposes, this project will stay up to date with the bleeding
+    # edge of the ccc collection by tracking main. This archive is stripped
+    # down to the essentials just like releases but is up to date with the
+    # latest commit to main.
     URL https://github.com/SkeletOSS/ccc/archive/refs/heads/main.zip
     DOWNLOAD_EXTRACT_TIMESTAMP FALSE
     SYSTEM
