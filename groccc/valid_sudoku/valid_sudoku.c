@@ -43,7 +43,7 @@ is_valid_box(
 }
 
 static struct Valid_sudoku_output
-valid_sudoku(struct Valid_sudoku_input *input) {
+valid_sudoku(struct Valid_sudoku_input const *const input) {
     Flat_bitset row_check = flat_bitset_with_storage(9 * 9L, (Bit[9 * 9]){});
     Flat_bitset col_check = flat_bitset_with_storage(9 * 9L, (Bit[9 * 9]){});
     for (size_t row = 0; row < 9; row += 3) {
