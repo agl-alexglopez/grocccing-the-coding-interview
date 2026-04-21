@@ -148,7 +148,7 @@ group_anagrams(
         if (occupied(&anagram)) {
             /* Save a little space and the string arena will only store unique
                anagram character arrays. */
-            string_arena_pop_str(str_arena, &key_value.key);
+            string_arena_pop_back(str_arena, &key_value.key);
             struct String_int const *const inserted = unwrap(&anagram);
             Flat_buffer *const group = flat_buffer_at(groups, inserted->val);
             (void)flat_buffer_push_back(group, str, allocator);

@@ -116,7 +116,7 @@ string_arena_maybe_resize_pos(
 }
 
 enum String_arena_result
-string_arena_pop_str(
+string_arena_pop_back(
     struct String_arena *const a, struct String_offset *const last_str
 ) {
     if (!a || !a->arena || !a->cap || !a->next_free_pos || !last_str
@@ -155,7 +155,11 @@ string_arena_free(
     if (!a || !allocator || !allocator->allocate) {
         return STRING_ARENA_ARGUMENT_ERROR;
     }
-    free(a->arena);
+    (void)allocator->allocate((CCC_Allocator_arguments){
+        .input = a->arena,
+        .bytes = 0,
+        .context = allocator->context,
+    });
     a->arena = NULL;
     a->next_free_pos = 0;
     a->cap = 0;
