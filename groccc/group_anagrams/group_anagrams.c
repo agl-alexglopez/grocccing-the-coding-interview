@@ -55,7 +55,7 @@ hash_string_offset(CCC_Key_arguments const context) {
 
 static void
 destroy_nested_buffers(CCC_Arguments const str_view_buffer) {
-    flat_buffer_clear_and_free(
+    (void)flat_buffer_clear_and_free(
         str_view_buffer.type, &(CCC_Destructor){}, &std_allocator
     );
 }
