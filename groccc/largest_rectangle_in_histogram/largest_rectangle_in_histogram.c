@@ -4,6 +4,7 @@
 #define TRAITS_USING_NAMESPACE_CCC
 #include "ccc/flat_buffer.h"
 #include "ccc/traits.h"
+#include "ccc/types.h"
 
 #include "utility/allocators.h"
 #include "utility/defer.h"

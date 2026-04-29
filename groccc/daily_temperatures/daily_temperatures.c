@@ -5,6 +5,7 @@
 #define TRAITS_USING_NAMESPACE_CCC
 #include "ccc/flat_buffer.h"
 #include "ccc/traits.h"
+#include "ccc/types.h"
 
 #include "daily_temperatures_tests.h"
 #include "utility/allocators.h"

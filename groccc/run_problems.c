@@ -38,7 +38,7 @@ See the test generation framework for what API the problems agree to use. */
 #endif
 #ifdef __APPLE__
 #    include <sys/syslimits.h>
-#    define FILESYS_MAX_PATH NAME_MAX
+#    define FILESYS_MAX_PATH PATH_MAX
 #endif
 
 #include <dirent.h>

@@ -144,22 +144,33 @@ group_anagrams(
             digits_character_count -= characters_needed_for_frequency;
             string_position += characters_needed_for_frequency;
         }
-        CCC_Entry anagram = try_insert(anagram_map, &key_value, allocator);
-        if (occupied(&anagram)) {
-            /* Save a little space and the string arena will only store unique
-               anagram character arrays. */
-            string_arena_pop_back(str_arena, &key_value.key);
-            struct String_int const *const inserted = unwrap(&anagram);
-            Flat_buffer *const group = flat_buffer_at(groups, inserted->val);
-            (void)flat_buffer_push_back(group, str, allocator);
-        } else {
-            flat_buffer_emplace_back(
-                groups,
-                allocator,
-                flat_buffer_from(*allocator, 0, (SV_Str_view[]){*str})
-            );
-            ++index;
-        }
+        /* This doesn't need to be written this way but I wanted to try using
+           comma separated expressions in the lazily evaluated or_insert_with
+           final argument position. Interesting concept due to lazily evaluated
+           side effects. Final expression is what is assigned. */
+        flat_hash_map_or_insert_with(
+            flat_hash_map_and_modify_with(
+                flat_hash_map_entry_wrap(
+                    anagram_map, &key_value.key, allocator
+                ),
+                struct String_int const *const seen,
+                {
+                    /* Save a little space and the string arena will only store
+                       unique anagram character arrays. */
+                    string_arena_pop_back(str_arena, &key_value.key);
+                    (void)flat_buffer_push_back(
+                        flat_buffer_at(groups, seen->val), str, allocator
+                    );
+                }
+            ),
+            (++index,
+             (void)flat_buffer_emplace_back(
+                 groups,
+                 allocator,
+                 flat_buffer_from(*allocator, 0, (SV_Str_view[]){*str})
+             ),
+             key_value)
+        );
     }
     return (struct Group_anagrams_output){*groups};
 }
@@ -172,7 +183,7 @@ main(void) {
        remember to clear (not free) their storage between tests. */
     struct String_arena str_arena = string_arena_create(4096, &std_allocator);
     Flat_buffer groups = flat_buffer_default(Flat_buffer);
-    Flat_hash_map anagram_map = CCC_flat_hash_map_default(
+    Flat_hash_map anagram_map = flat_hash_map_default(
         struct String_int,
         key,
         (CCC_Hasher){
