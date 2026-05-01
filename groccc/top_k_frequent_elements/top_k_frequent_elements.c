@@ -136,7 +136,7 @@ top_k_frequent_elements(
        be equal to N in some cases. So this gives us amortized O(K*log(N)). */
     while (to_push && !is_empty(&max_heap)) {
         struct Priority_int const *const max = front(&max_heap);
-        (void)push_back(top_k, &max->kv.key, allocator);
+        (void)flat_buffer_emplace_back(top_k, allocator, (int){max->kv.key});
         pop(&max_heap, &(CCC_Allocator){});
         --to_push;
     }
