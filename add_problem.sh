@@ -67,28 +67,24 @@ cat > "$H_FILE" <<EOF
 
 #include "utility/test_case_generator.h"
 
-struct ${STRUCT_PREFIX}_input {
-    /* TODO: define input fields */
-};
+TCG_tests(${PROBLEM}_tests,
+    ((struct ${STRUCT_PREFIX}_input{
+        /* TODO: define input fields */
+    }){}),
+    ((struct ${STRUCT_PREFIX}_output{
+        /* TODO: define output fields */
+    }){}),
+    TCG_test("describe this test", {
+        .input = {
+            /* TODO: struct ${STRUCT_PREFIX}_input field initializers. */
+        },
+        .output = {
+            /* TODO: struct ${STRUCT_PREFIX}_output field initializers. */
+        },
+    }),
+    /* TODO: add more tests with TCG_test macro. */
+);
 
-struct ${STRUCT_PREFIX}_output {
-    /* TODO: define expected output fields */
-};
-
-TCG_tests_begin(${PROBLEM}_tests,
-                struct ${STRUCT_PREFIX}_input,
-                struct ${STRUCT_PREFIX}_output)
-
-TCG_test_case("describe this test", {
-    .input = {
-        /* TODO: struct ${STRUCT_PREFIX}_input field initializers. */
-    },
-    .output = {
-        /* TODO: struct ${STRUCT_PREFIX}_output field initializers. */
-    },
-})
-
-TCG_tests_end(${PROBLEM}_tests);
 
 #endif /* ${HEADER_GUARD}_TESTS_H */
 EOF

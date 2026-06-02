@@ -18,46 +18,42 @@ Define test cases in a separate header. Every test case is given a `name`,
 
 #include "../test_case_generator.h"
 
-struct Two_sum_input
-{
-    int target;
-    int const *const nums;
-    size_t nums_count;
-};
-
-struct Two_sum_output
-{
-    int addends[2];
-};
-
-TCG_tests_begin(two_sum_tests, struct Two_sum_input, struct Two_sum_output)
-TCG_test_case("empty", {
-    .input = {},
-    .output = {
-        .addends = {-1, -1}
-    },
-})
-TCG_test_case("negatives", {
-    .input = {
-        .target = 15,
-        .nums = (int[10]){1, 3, -980, 6, 7, 13, 44, 32, 995, -1,},
-        .nums_count = 10,
-    },
-    .output = {
-        .addends = {8, 2},
-    }
-})
-TCG_test_case("no solution", {
-    .input = {
-        .target = 2,
-        .nums = (int[4]){1, 3, 4, 5},
-        .nums_count = 4,
-    },
-    .output = {
-        .addends = {-1, -1}
-    },
-})
-TCG_tests_end(two_sum_tests);
+TCG_tests(two_sum_tests,
+    ((struct Two_sum_input{
+        int target;
+        int const *const nums;
+        size_t nums_count;
+    }){}),
+    ((struct Two_sum_output{
+        int addends[2];
+    }){}),
+    TCG_test("empty", {
+        .input = {},
+        .output = {
+            .addends = {-1, -1}
+        },
+    }),
+    TCG_test("negatives", {
+        .input = {
+            .target = 15,
+            .nums = (int[10]){1, 3, -980, 6, 7, 13, 44, 32, 995, -1,},
+            .nums_count = 10,
+        },
+        .output = {
+            .addends = {8, 2},
+        }
+    }),
+    TCG_test("no solution", {
+        .input = {
+            .target = 2,
+            .nums = (int[4]){1, 3, 4, 5},
+            .nums_count = 4,
+        },
+        .output = {
+            .addends = {-1, -1}
+        },
+    }),
+);
 #endif // TWO_SUM_TEST_CASES_H
 ```
 
@@ -163,21 +159,26 @@ typedef unsigned long TCG_Count; /* NOLINT */
 /** @brief Create a custom test case type struct with input and output types.
 @param[in] test_cases_name the name of the struct holding all test cases.
 @param[in] input_type the struct name of the input type. For clarity, define
-structs with named fields for all input, even if a single field.
+structs with named fields for all input, even if a single field. When using the
+helper script to add problems these will be inserted as inline struct
+definitions such as `((struct Test_input {int i;}){})` so they only need to be
+defined in one location.
 @param[in] output_type the struct name of the expected output type. For clarity,
-define structs with named fields for all output, even if a single field.
-@warning a terminating semicolon is not needed when calling this macro.
+define structs with named fields for all output, even if a single field. When
+using the helper script to add problems these will be inserted as inline struct
+definitions such as `((struct Test_output {int i;}){})` so they only need to be
+defined in one location.
 @warning output is a constant field and cannot be mutated. */
-#define TCG_tests_begin(test_cases_name, input_type, output_type)              \
+#define TCG_tests(test_cases_name, input_type, output_type, test_cases...)     \
     static struct {                                                            \
         char const *const file;                                                \
         int line;                                                              \
         char const *const name;                                                \
         struct {                                                               \
-            input_type input;                                                  \
-            output_type const output;                                          \
+            typeof(input_type) input;                                          \
+            typeof(output_type) const output;                                  \
         };                                                                     \
-    }(test_cases_name)[] = {
+    }(test_cases_name)[] = {test_cases};
 
 /** @brief Create a test case within a test struct by name, input, and output
 @param[in] test_name the string literal name used to describe the test.
@@ -189,48 +190,37 @@ initializers for the input and expected output of a test case.
 Here is a minimal usage example
 
 ```
-struct Two_sum_input
-{
-    int target;
-    int const *const nums;
-    size_t nums_count;
-};
-struct Two_sum_output
-{
-    int addends[2];
-};
-TCG_tests_begin(two_sum_tests, struct Two_sum_input, struct Two_sum_output)
-TCG_test_case("negatives", {
-    .input = {
-        .target = 15,
-        .nums = (int[10]){1, 3, -980, 6, 7, 13, 44, 32, 995, -1,},
-        .nums_count = 10,
-    },
-    .output = {
-        .addends = {8, 2},
-    }
-})
-TCG_tests_end(two_sum_tests);
+TCG_tests(two_sum_tests,
+    ((struct Two_sum_input{
+        int target;
+        int const *const nums;
+        size_t nums_count;
+    }){}),
+    ((struct Two_sum_output{
+        int addends[2];
+    }){}),
+    TCG_test("negatives", {
+        .input = {
+            .target = 15,
+            .nums = (int[10]){1, 3, -980, 6, 7, 13, 44, 32, 995, -1,},
+            .nums_count = 10,
+        },
+        .output = {
+            .addends = {8, 2},
+        }
+    }),
+);
 ```
 
 The names of the input and output fields are always the same but their types
 are defined for each test by the user. */
-#define TCG_test_case(test_name, brace_enclosed_input_output_initializers...)  \
+#define TCG_test(test_name, brace_enclosed_input_output_initializers...)       \
     {                                                                          \
         .file = __FILE_NAME__,                                                 \
         .line = __LINE__,                                                      \
         .name = test_name,                                                     \
         brace_enclosed_input_output_initializers,                              \
-    },
-
-/** @brief End the test cases defined for the given struct.
-@param[in] test_cases_name the same name used for the begin macro.
-@warning a terminating semicolon is needed when calling this macro. */
-#define TCG_tests_end(test_cases_name)                                         \
-    }                                                                          \
-    ;                                                                          \
-    static const TCG_Count static_tcg_count_##test_cases_name                  \
-        = sizeof(test_cases_name) / sizeof((test_cases_name)[0])
+    }
 
 /** @brief Retrieve the unsigned long long count of tests for this test case
 struct.
@@ -239,7 +229,8 @@ struct.
 
 This can be helpful if the user is tracking how many tests are being passed or
 failed while iterating over the test cases struct. */
-#define TCG_tests_count(test_cases_name) static_tcg_count_##test_cases_name
+#define TCG_tests_count(test_cases_name)                                       \
+    (sizeof(test_cases_name) / sizeof((test_cases_name)[0]))
 
 /** @brief Obtain the string name given to a test.
 @param[in] test_cases_name the name of the current test cases struct being ran.
