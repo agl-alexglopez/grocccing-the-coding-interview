@@ -9,7 +9,7 @@
 #define PRIORITY_QUEUE_USING_NAMESPACE_CCC
 #include "ccc/flat_buffer.h"
 #include "ccc/flat_hash_map.h"
-#include "ccc/priority_queue.h"
+#include "ccc/specialized/priority_queue.h"
 #include "ccc/traits.h"
 #include "ccc/types.h"
 
