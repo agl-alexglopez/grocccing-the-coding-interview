@@ -45,10 +45,10 @@ target_compile_options(ccc PRIVATE "-w")
 get_target_property(ccc_SOURCE_DIR ccc SOURCE_DIR)
 # We will leave this here to always be able to test CCC freestanding. But we
 # won't define the cache variables or set the user configuration here. Only do
-# that at the command line via -DCCC_USER_CONFIGURATION="ccc_configuration.h"
+# that at the command line via -DCCC_USER_CONFIGURATION="groccc_ccc_configuration.h"
 # or via a cache variable in CMakePresets.json.
 target_include_directories(ccc PUBLIC
-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/configuration>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/groccc_configuration>
 )
 
 
