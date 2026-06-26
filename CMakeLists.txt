@@ -48,7 +48,7 @@ get_target_property(ccc_SOURCE_DIR ccc SOURCE_DIR)
 # that at the command line via -DCCC_USER_CONFIGURATION="groccc_ccc_configuration.h"
 # or via a cache variable in CMakePresets.json.
 target_include_directories(ccc PUBLIC
-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/groccc_configuration>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/groccc_ccc_configuration>
 )
 
 
