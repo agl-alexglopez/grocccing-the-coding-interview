@@ -39,7 +39,7 @@ sort_an_array(struct Sort_an_array_input const *const input) {
     if (is_empty(&input->ints)) {
         return (struct Sort_an_array_output){};
     }
-    CCC_Result const result = sort_heapsort(
+    CCC_Result const result = sort_heap(
         &input->ints,
         &(int){},
         CCC_ORDER_LESSER,
