@@ -57,8 +57,8 @@ target_include_directories(ccc PUBLIC
 include(FetchContent)
 FetchContent_Declare(
     str_view
-    URL https://github.com/skeletoss/str_view/releases/download/v0.7.7/str_view-v0.7.7.zip
-    URL_HASH SHA256=e59284a0031986e09e629b983b0b525582f4cdd38d839abfee842b365d085159
+    URL https://github.com/skeletoss/str_view/releases/download/v0.8.1/str_view-v0.8.1.zip
+    URL_HASH SHA256=0db1bd7cbac2f4d1eeb7a854193bdea7eb194ac4574c444fb4a7688a5cdedd32
     DOWNLOAD_EXTRACT_TIMESTAMP FALSE
     SYSTEM
 )
